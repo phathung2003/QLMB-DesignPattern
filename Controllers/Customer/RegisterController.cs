@@ -9,15 +9,20 @@ namespace QLMB.Controllers
         private database db = new database();
         private ThongTinND info = new ThongTinND();
 
-        //----------- Người thuê -----------//
-        //Trang đăng ký
-        public ActionResult rentalInfo()
+        private Dictionary<string, ValidationFactory> validationFactories = new Dictionary<string, ValidationFactory>
+    {
+        { "CMND", new CMNDValidationFactory() },
+        { "Password", new PasswordValidationFactory() }
+        // Thêm các loại kiểm tra khác nếu cần
+    };
+
+        // Trang đăng ký
+        public ActionResult RentalInfo()
         {
             return View();
         }
 
-
-        //Xử lý thông tin
+        // Xử lý thông tin
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RentalInfo(ThongTinND thongTin, string username, string password, string rePassword)
@@ -49,63 +54,34 @@ namespace QLMB.Controllers
         //Kiểm tra thông tin
         private bool checkInfo(ThongTinND thongTin, string username, string password, string rePassword)
         {
-            (bool, string) CMND = Validation.CMND(thongTin.CMND);
-            (bool, string) NgayCap = Validation.NgayCap(thongTin.NgayCap);
-            (bool, string) HoTen = Validation.HoTen(thongTin.HoTen);
-            (bool, string) GioiTinh = Validation.Gender(thongTin.GioiTinh);
-            (bool, string) NgaySinh = Validation.Birthday_25(thongTin.NgaySinh);
-            (bool, string) DiaChi = Validation.Address(thongTin.DiaChi);
+            (bool, string) CMND = ValidateField(thongTin.CMND, "CMND");
+            (bool, string) NgayCap = ValidateField(thongTin.NgayCap, "NgayCap");
+            (bool, string) HoTen = ValidateField(thongTin.HoTen, "HoTen");
+            (bool, string) GioiTinh = ValidateField(thongTin.GioiTinh, "GioiTinh");
+            (bool, string) NgaySinh = ValidateField(thongTin.NgaySinh, "NgaySinh");
+            (bool, string) DiaChi = ValidateField(thongTin.DiaChi, "DiaChi");
 
-            (bool, string) TenDangNhap = Validation.Username_8(username);
-            (bool, string) MatKhau = Validation.Password(password);
-            (bool, string) NhapLaiMatKhau = Validation.rePassword(password, rePassword);
-            
+            (bool, string) TenDangNhap = ValidateField(username, "TenDangNhap");
+            (bool, string) MatKhau = ValidateField(password, "MatKhau");
+            (bool, string) NhapLaiMatKhau = ValidateField(rePassword, "MatKhauLai");
+
             bool check = CMND.Item1 && NgayCap.Item1 && HoTen.Item1 && GioiTinh.Item1 &&
                          NgaySinh.Item1 && DiaChi.Item1 && TenDangNhap.Item1 && MatKhau.Item1 && NhapLaiMatKhau.Item1;
 
-            if (check)
-                return true;
+            if (!check)
+            {
+                ModelState.AddModelError("Validation", "Có lỗi xảy ra trong quá trình kiểm tra thông tin.");
+            }
 
-            //CMND chưa nhập
-            if (!CMND.Item1)
-                ModelState.AddModelError("CMND", CMND.Item2);
+            return check;
+        }
 
+        private (bool, string) ValidateField(string fieldValue, string validationType)
+        {
+            var factory = validationFactories[validationType];
+            return factory.Validate(fieldValue);
+        }
 
-            //Ngày cấp
-            if (!NgayCap.Item1) 
-                ModelState.AddModelError("NgayCapCMND", NgayCap.Item2);
-
-            //Họ tên
-            if (!HoTen.Item1)
-                ModelState.AddModelError("HoTen", HoTen.Item2);
-
-
-            //Giới tính
-            if (!GioiTinh.Item1)
-                ModelState.AddModelError("GioiTinh", GioiTinh.Item2);
-
-
-            //Ngày sinh
-            if (!NgaySinh.Item1)
-                ModelState.AddModelError("NgaySinhND", NgaySinh.Item2);
-            
-            //Địa chỉ
-            if(!DiaChi.Item1)
-                ModelState.AddModelError("DiaChi", DiaChi.Item2);
-
-
-            //Tên đăng nhập
-            if (!TenDangNhap.Item1)
-                ModelState.AddModelError("TenDangNhap", TenDangNhap.Item2);
-
-            //Mật khẩu
-            if (!MatKhau.Item1)
-                ModelState.AddModelError("MatKhau", MatKhau.Item2);
-
-            //Nhập lại mật khẩu
-            if(!NhapLaiMatKhau.Item1)
-                ModelState.AddModelError("MatKhauLai", NhapLaiMatKhau.Item2); 
-
-            return false;
-        }    }
-}
+        // Các phương thức khác của RegisterController
+    }
+};
