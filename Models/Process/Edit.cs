@@ -6,56 +6,57 @@ namespace QLMB.Models.Process
 {
     public class Edit
     {
-        private static string DefaultPassword = "123456";
+        private static database database = new database();
+        private static readonly string defaultPassword = "123456";
         //Nhân sự
-        public static (bool,string) EmployeeInfo(database db,ThongTinND info,NhanVien employee, ListChucVu roll, string currentCMND)
+        public static (bool,string) EmployeeInfo(ThongTinND userInfo,NhanVien employee, ChucVu role, string currentCMND)
         {
             try
             {
-                string newCMND = info.CMND.Trim();
+                string newCMND = userInfo.CMND.Trim();
 
                 if (currentCMND != newCMND)
-                    UpdateCMND(db, currentCMND, newCMND);
+                    UpdateCMND(currentCMND, newCMND);
 
 
                 string currentRole = employee.MaChucVu.Trim();
-                string newRole = roll.MaChucVu.Trim();
+                string newRole = role.MaChucVu.Trim();
 
                 if (currentRole != newRole)
                 {
                     string currentMaNV = employee.MaNV.Trim();
-                    string newMaNV = newRole + Shared.CreateID(db, newRole).ToString();
-                    UpdateMaNV(db, currentMaNV, newMaNV, newRole);
+                    string newMaNV = newRole + Shared.CreateID(database, newRole).ToString();
+                    UpdateMaNV(currentMaNV, newMaNV, newRole);
                 }
 
-                db.Entry(info).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(userInfo).State = EntityState.Modified;
+                database.SaveChanges();
                 return (true, "Đổi thông tin thành công");
             }
             catch {return (false, "Đổi thông tin thất bại"); }
         }
 
-        private static void UpdateCMND(database db, string currentCMND, string newCMND)
+        private static void UpdateCMND(string currentCMND, string newCMND)
         {
             currentCMND = currentCMND.Trim();
             newCMND = newCMND.Trim();
 
             string query = $"UPDATE ThongTinND SET CMND = '{newCMND}' WHERE CMND = '{currentCMND}'";
-            db.Database.ExecuteSqlCommand(query);
+            database.Database.ExecuteSqlCommand(query);
         }
 
-        private static void UpdateMaNV(database db, string currentMANV, string newMANV, string newRole)
+        private static void UpdateMaNV(string currentMANV, string newMANV, string newRole)
         {
             currentMANV = currentMANV.Trim();
             newMANV = newMANV.Trim();
 
             string query = $"UPDATE NhanVien SET MaNV = '{newMANV}', MaChucVu = '{newRole}' WHERE MaNV = '{currentMANV}'";
-            db.Database.ExecuteSqlCommand(query);
+            database.Database.ExecuteSqlCommand(query);
         }
 
-        public static bool EmployeeStatus(database db,NhanVien employee, string type)
+        public static bool EmployeeStatus(NhanVien employee, string type)
         {
-            employee = db.NhanViens.Where(s => s.MaNV == employee.MaNV.Trim()).FirstOrDefault();
+            employee = database.NhanViens.Where(s => s.MaNV == employee.MaNV.Trim()).FirstOrDefault();
             try
             {
                 switch (type)
@@ -66,58 +67,58 @@ namespace QLMB.Models.Process
 
                     case "Hired":
                         employee.MATT = 6;
-                        employee.MatKhau = SHA256.ToSHA256(DefaultPassword);
+                        employee.MatKhau = SHA256.ToSHA256(defaultPassword);
                         break;
 
                     case "ResetPassword":
-                        employee.MatKhau = SHA256.ToSHA256(DefaultPassword);
+                        employee.MatKhau = SHA256.ToSHA256(defaultPassword);
                         break;
                 }
-                db.Entry(employee).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(employee).State = EntityState.Modified;
+                database.SaveChanges();
 
                 return true;
             }
             catch { return false; }
         }
 
-        public static bool EployeeFirstLogin(database db, NhanVien employee)
+        public static bool EployeeFirstLogin(NhanVien employee)
         {
             try
             {
-                NhanVien update = db.NhanViens.Where(s => employee.MaNV.Trim() == s.MaNV.Trim()).FirstOrDefault();
+                NhanVien update = database.NhanViens.Where(s => employee.MaNV.Trim() == s.MaNV.Trim()).FirstOrDefault();
                 
                 update.MATT = 4;
                 update.MatKhau = SHA256.ToSHA256(employee.MatKhau);
 
                 //Lưu vào database
-                db.Entry(update).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(update).State = EntityState.Modified;
+                database.SaveChanges();
 
                 return true;
             }
             catch { return false; }
         }
 
-        public static (bool,string) EmployeeProfile(database db, ThongTinND info)
+        public static (bool,string) EmployeeProfile(ThongTinND userInfo)
         {
             try
             {
-                db.Entry(info).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(userInfo).State = EntityState.Modified;
+                database.SaveChanges();
 
                 return (true, "Đổi thông tin thành công");
             }
             catch { return (false, "* Đổi thông tin thất bại, vui lòng thử lại sau"); }
         }
 
-        public static (bool, string) EmployeePassword(database db, NhanVien employee)
+        public static (bool, string) EmployeePassword(NhanVien employee)
         {
             try
             {
                 employee.MatKhau = SHA256.ToSHA256(employee.MatKhau);
-                db.Entry(employee).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(employee).State = EntityState.Modified;
+                database.SaveChanges();
 
                 return (true, null);
             }
@@ -125,10 +126,9 @@ namespace QLMB.Models.Process
         }
 
         //Sự kiện - Ưu đãi
-        public static (bool, string, SuKienUuDai) EventVerified(database db, string MaDon, string NguoiDuyet, string type)
+        public static (bool, string, SuKienUuDai) EventVerified(string maDon, string nguoiDuyet, string type)
         {
-            SuKienUuDai info = db.SuKienUuDais.Where(s => s.MaDon.Trim() == MaDon.Trim()).FirstOrDefault();
-            
+            SuKienUuDai info = database.SuKienUuDais.Where(s => s.MaDon.Trim() == maDon.Trim()).FirstOrDefault();
             try
             {
                 switch (type)
@@ -141,11 +141,11 @@ namespace QLMB.Models.Process
                         break;
                 }
 
-                info.MaNV = NguoiDuyet.Trim();
+                info.MaNV = nguoiDuyet.Trim();
                 info.NgayDuyet = DateTime.Now;
 
-                db.Entry(info).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(info).State = EntityState.Modified;
+                database.SaveChanges();
                 if(info.MATT == 1)
                     return (true, "Cài lại thành công", info);
 
@@ -156,15 +156,15 @@ namespace QLMB.Models.Process
         }
 
         //Khách hàng
-        public static (bool, string) CustomerPassword(database db, NguoiThue info)
+        public static (bool, string) CustomerPassword(NguoiThue userInfo)
         {
             try
             {
-                string authTmp = SHA256.ToSHA256(info.MatKhau);
-                info.MatKhau = authTmp;
+                string authTmp = SHA256.ToSHA256(userInfo.MatKhau);
+                userInfo.MatKhau = authTmp;
 
-                db.Entry(info).State = EntityState.Modified;
-                db.SaveChanges();
+                database.Entry(userInfo).State = EntityState.Modified;
+                database.SaveChanges();
 
                 return (true, "Đổi mật khẩu thành công");
             }

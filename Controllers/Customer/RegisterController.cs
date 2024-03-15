@@ -28,7 +28,7 @@ namespace QLMB.Controllers
 
                 if (checkAccount.Item1)
                 {
-                    (bool, string) saveInfo = Create.Customer(db, thongTin, username, password);
+                    (bool, string) saveInfo = Create.Customer(thongTin, username, password);
 
                     if (saveInfo.Item1)
                     {

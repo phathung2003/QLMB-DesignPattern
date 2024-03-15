@@ -92,7 +92,7 @@ namespace QLMB.Controllers
                     {
                         nguoiThue.CMND = Session["CMND"].ToString();
                         nguoiThue.TenDangNhap = Session["TenDangNhap"].ToString();
-                        (bool, string) changePassword = Edit.CustomerPassword(db, nguoiThue);
+                        (bool, string) changePassword = Edit.CustomerPassword(nguoiThue);
 
                         if (changePassword.Item1)
                         {

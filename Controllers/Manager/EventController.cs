@@ -92,7 +92,7 @@ namespace QLMB.Controllers
         public ActionResult Detail(SuKienUuDai info, string btn)
         {
             string MaNV = ((NhanVien)Session["EmployeeInfo"]).MaNV;
-            (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(db, info.MaDon, MaNV, btn);
+            (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(info.MaDon, MaNV, btn);
             if (saveVerified.Item1)
             {
                 TempData["msg"] = $"<script>alert('{saveVerified.Item2}');</script>";
