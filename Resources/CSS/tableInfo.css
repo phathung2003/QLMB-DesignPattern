@@ -25,7 +25,7 @@
 
     .table-scroll table {
         width: 100%;
-        /*min-width: 1280px;*/
+        min-width: 1280px;
         margin: auto;
         border-collapse: separate;
         border-spacing: 0;
