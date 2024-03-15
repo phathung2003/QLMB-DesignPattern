@@ -8,7 +8,7 @@ namespace QLMB.Models.Process
     {
         private static string DefaultPassword = "123456";
         //Nhân sự
-        public static (bool,string) EmployeeInfo(database db,ThongTinND info,NhanVien employee, ListChucVu roll, string currentCMND)
+        public static (bool,string) EmployeeInfo(database db,ThongTinND info,NhanVien employee, ChucVu roll, string currentCMND)
         {
             try
             {

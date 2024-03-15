@@ -4,7 +4,7 @@
     {
         private static string DefaultPassword = "123456";
         //Thêm dữ liệu
-        public static (bool,string) Employee(database db, ThongTinND thongTin, ListChucVu chucVu)
+        public static (bool,string) Employee(database db, ThongTinND thongTin, ChucVu chucVu)
         {
             try
             {

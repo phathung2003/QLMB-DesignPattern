@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using QLMB.Models.Process;
+using QLMB.Design_Pattern.Singleton;
 
 namespace QLMB.Controllers
 {
@@ -28,18 +29,15 @@ namespace QLMB.Controllers
                                                s.ThongTinND.HoTen.ToUpper().Contains(NameSearch.ToUpper()) ||
                                                s.TinhTrang.TenTT.ToUpper().Contains(NameSearch.ToUpper())).ToList();
                     }
-
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EmployeeMain";
                     return View(data);
                 }
-
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue");}
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
 
@@ -68,23 +66,20 @@ namespace QLMB.Controllers
                         Session["HumanResourceEmployeeTemp"] = db.NhanViens.Where(s => s.CMND == CMND).FirstOrDefault();
                         Session.Remove("TempRole");
                     }
-
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EmployeeDetail";
                     return View(info);
                 }
-
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue");}
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Detail(ThongTinND info, ListChucVu roll , string btn)
+        public ActionResult Detail(ThongTinND info, ChucVu role, string btn)
         {
             NhanVien employee = (NhanVien)Session["HumanResourceEmployeeTemp"];
 
@@ -98,16 +93,16 @@ namespace QLMB.Controllers
 
             string currentCMND = ((NhanVien)Session["HumanResourceEmployeeTemp"]).CMND.Trim();
 
-            if (checkEdit(info, roll, currentCMND))
+            if (checkEdit(info, role, currentCMND))
             {
                 NhanVien User = (NhanVien)Session["EmployeeInfo"];
                 NhanVien Current = (NhanVien)Session["HumanResourceEmployeeTemp"];
 
                 //Xử lý việc tự edit cho chính mình
                 if (User.MaChucVu.Trim() == Current.MaChucVu.Trim() && Current.MaChucVu.Trim() == "NS")
-                    roll.MaChucVu = "NS";
+                    role.MaChucVu = "NS";
 
-                (bool, string) saveDetail = Edit.EmployeeInfo(db, info, (NhanVien)Session["HumanResourceEmployeeTemp"], roll, currentCMND);
+                (bool, string) saveDetail = Edit.EmployeeInfo(db, info, (NhanVien)Session["HumanResourceEmployeeTemp"], role, currentCMND);
                 if (saveDetail.Item1)
                 {
                     TempData["msg"] = $"<script>alert('{saveDetail.Item2}');</script>";
@@ -140,13 +135,13 @@ namespace QLMB.Controllers
             }
 
             //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue");}
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
         //Xử lý thông tin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(ThongTinND info, ListChucVu role)
+        public ActionResult Register(ThongTinND info, ChucVu role)
         {
             if (checkInfoEmployee(info, role))
             {
@@ -173,24 +168,20 @@ namespace QLMB.Controllers
         {
             if (checkRole() && Session["Page"] != null)
             {
-                ListChucVu roll = new ListChucVu();
-                roll.SettingList(db.ChucVus.ToList<ChucVu>());
-
-
-                if (Session["TempRole"] != null)
-                    roll.CurrentEmployee = Session["TempRole"].ToString();
-
+                if (Session["TempRole"] != null) 
+                {
+                    ChucVu_Singleton.Instance.CurrentRole = Session["TempRole"].ToString();
+                }
                 else if (!Validation.CMND(CMND).Item1 || Session["Page"].ToString() == "EmployeeRegister")
-                    roll.CurrentEmployee = "Default";
-
+                {
+                    ChucVu_Singleton.Instance.CurrentRole = "Default";
+                }    
                 else
                 {
                     NhanVien employee = db.NhanViens.Where(s => s.CMND.Trim() == CMND.Trim()).FirstOrDefault();
-                    roll.CurrentEmployee = employee.MaChucVu;
+                    ChucVu_Singleton.Instance.CurrentRole = employee.MaChucVu;
                 }
-
-
-                return PartialView(roll);
+                return PartialView();
             }
             //ViewBag.DepartmentID = new SelectList(chucVu.List, "MaChucVu", "TenCV", MaChucVu);
 
@@ -202,7 +193,7 @@ namespace QLMB.Controllers
         //*-- Xử lý --*//
 
         //Kiểm tra thông tin đăng ký
-        private bool checkInfoEmployee(ThongTinND thongTin, ListChucVu chucVu)
+        private bool checkInfoEmployee(ThongTinND thongTin, ChucVu chucVu)
         {
             (bool, string) CMND = Validation.ExistCMND(thongTin.CMND);
             (bool, string) NgayCap = Validation.NgayCap(thongTin.NgayCap);
@@ -256,7 +247,7 @@ namespace QLMB.Controllers
 
 
         //Kiểm tra thông tin edit
-        private bool checkEdit(ThongTinND info, ListChucVu roll, string currentCMND)
+        private bool checkEdit(ThongTinND info, ChucVu roll, string currentCMND)
         {
             NhanVien User = (NhanVien)Session["EmployeeInfo"];
             NhanVien Current = (NhanVien)Session["HumanResourceEmployeeTemp"];
