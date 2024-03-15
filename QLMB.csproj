@@ -140,7 +140,6 @@
     <Compile Include="Controllers\Manager\PropertyController.cs" />
     <Compile Include="Controllers\Payment\PaymentController.cs" />
     <Compile Include="Controllers\SkillIssueController.cs" />
-    <Compile Include="Design_Pattern\Singleton\ChucVu_Singleton.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -187,6 +186,7 @@
       <DependentUpon>database.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Process\Create.cs" />
+    <Compile Include="Models\ListChucVu.cs" />
     <Compile Include="Models\Process\Edit.cs" />
     <Compile Include="Models\Process\RandomID.cs" />
     <Compile Include="Models\Process\Shared.cs" />
