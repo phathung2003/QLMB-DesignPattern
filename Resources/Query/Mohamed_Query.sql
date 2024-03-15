@@ -240,7 +240,7 @@ INSERT INTO ThongTinND VALUES('072203008516', '20/09/2022', N'Nguyễn Minh Trí
 INSERT INTO ThongTinND VALUES('123456789012', '27/01/2022', N'Nguyễn Phát Hưng', N'Nam', '17/09/1992', N'42/17 Hồ Thị Kỷ, Phường 1, Quận 10, TP.Hồ Chí Minh', '');
 INSERT INTO ThongTinND VALUES('098765432109', '27/01/2022', N'Lưu Chí Cường', N'Nam', '17/09/1992', N'42/17 Hồ Thị Kỷ, Phường 1, Quận 10, TP.Hồ Chí Minh', '');
 
-
+--Tài khoản nhân viên (Default Password: 123456)
 INSERT INTO NhanVien 
 	VALUES('NS0', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 'NS', 4, '098765432109');
 

@@ -107,7 +107,7 @@ namespace QLMB.Controllers
         {
             if (checkFirstTime(info, rePass))
             {
-                if (Edit.EployeeFirstLogin(db, info))
+                if (Edit.EployeeFirstLogin(info))
                 {
                     Session["EmployeeInfo"] = db.NhanViens.Where(s => s.MaNV.Trim() == info.MaNV.Trim()).FirstOrDefault();
                     return Manager();
@@ -137,7 +137,7 @@ namespace QLMB.Controllers
         {
             if (checkGeneral(info))
             {
-                (bool, string) saveProfile = Edit.EmployeeProfile(db, info);
+                (bool, string) saveProfile = Edit.EmployeeProfile(info);
                 
                 if (saveProfile.Item1)
                 {
@@ -177,7 +177,7 @@ namespace QLMB.Controllers
         {
             if (checkChangePassword(info, currentPass, rePass))
             {
-                (bool, string) savePassword = Edit.EmployeePassword(db, info);
+                (bool, string) savePassword = Edit.EmployeePassword(info);
 
                 if(savePassword.Item1)
                     TempData["msg"] = "<script>alert('Đổi mật khẩu thành công');</script>";

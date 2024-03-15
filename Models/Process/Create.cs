@@ -2,63 +2,63 @@
 {
     public class Create
     {
-        private static string DefaultPassword = "123456";
+        private static database database = new database();
+        private static readonly string DefaultPassword = "123456";
         //Thêm dữ liệu
-        public static (bool,string) Employee(database db, ThongTinND thongTin, ListChucVu chucVu)
+        public static (bool,string) Employee(ThongTinND userInfo, ChucVu role)
         {
             try
             {
                 string authTmp = SHA256.ToSHA256(DefaultPassword);
 
-                ThongTinND info = new ThongTinND();
-                info.CMND = thongTin.CMND.Trim();
-                info.NgayCap = thongTin.NgayCap;
+                ThongTinND setDatabase = new ThongTinND();
+                setDatabase.CMND = userInfo.CMND.Trim();
+                setDatabase.NgayCap = userInfo.NgayCap;
 
-                info.HoTen = thongTin.HoTen.ToString();
-                info.GioiTinh = thongTin.GioiTinh.ToString();
-                info.NgaySinh = thongTin.NgaySinh;
-                info.DiaChi = thongTin.DiaChi.ToString();
+                setDatabase.HoTen = userInfo.HoTen.ToString();
+                setDatabase.GioiTinh = userInfo.GioiTinh.ToString();
+                setDatabase.NgaySinh = userInfo.NgaySinh;
+                setDatabase.DiaChi = userInfo.DiaChi.ToString();
 
                 NhanVien account = new NhanVien();
-                account.CMND = thongTin.CMND.Trim();
-                account.MaNV = chucVu.MaChucVu.Trim() + Shared.CreateID(db, chucVu.MaChucVu).ToString();
+                account.CMND = userInfo.CMND.Trim();
+                account.MaNV = role.MaChucVu.Trim() + Shared.CreateID(database, role.MaChucVu).ToString();
                 account.MatKhau = authTmp.Trim();
-                account.MaChucVu = chucVu.MaChucVu.Trim();
+                account.MaChucVu = role.MaChucVu.Trim();
                 account.MATT = 6;
 
-                db.ThongTinNDs.Add(info);
-                db.NhanViens.Add(account);
-
-                db.SaveChanges();
+                database.ThongTinNDs.Add(setDatabase);
+                database.NhanViens.Add(account);
+                database.SaveChanges();
 
                 return (true, "Đăng ký thành công");
             }
             catch { return (false, "Tạo tài khoản thất bại - Xin vui lòng thử lại !"); }
         }
 
-        public static (bool,string) Customer(database db, ThongTinND thongTin, string username, string password)
+        public static (bool,string) Customer(ThongTinND userInfo, string username, string password)
         {
             try
             {
                 string authTmp = SHA256.ToSHA256(password);
 
-                ThongTinND info = new ThongTinND();
-                info.CMND = thongTin.CMND.Trim();
-                info.NgayCap = thongTin.NgayCap;
+                ThongTinND setDatabase = new ThongTinND();
+                setDatabase.CMND = userInfo.CMND.Trim();
+                setDatabase.NgayCap = userInfo.NgayCap;
 
-                info.HoTen = thongTin.HoTen.ToString();
-                info.GioiTinh = thongTin.GioiTinh.ToString();
-                info.NgaySinh = thongTin.NgaySinh;
-                info.DiaChi = thongTin.DiaChi.ToString();
+                setDatabase.HoTen = userInfo.HoTen.ToString();
+                setDatabase.GioiTinh = userInfo.GioiTinh.ToString();
+                setDatabase.NgaySinh = userInfo.NgaySinh;
+                setDatabase.DiaChi = userInfo.DiaChi.ToString();
 
                 NguoiThue account = new NguoiThue();
-                account.CMND = thongTin.CMND.Trim();
+                account.CMND = userInfo.CMND.Trim();
                 account.TenDangNhap = username.Trim();
                 account.MatKhau = authTmp.Trim();
 
-                db.ThongTinNDs.Add(info);
-                db.NguoiThues.Add(account);
-                db.SaveChanges();
+                database.ThongTinNDs.Add(setDatabase);
+                database.NguoiThues.Add(account);
+                database.SaveChanges();
 
                 return (true, "Đăng ký thành công");
             }
