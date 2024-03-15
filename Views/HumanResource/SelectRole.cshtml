@@ -1,16 +1,17 @@
-﻿@using QLMB.Models;
-@using QLMB.Design_Pattern.Singleton;
-@model QLMB.Models.ChucVu
+﻿@model QLMB.Models.ListChucVu
+
 @{
-    NhanVien User = (NhanVien)Session["EmployeeInfo"];
-    NhanVien Current = (NhanVien)Session["HumanResourceEmployeeTemp"];
+    QLMB.Models.NhanVien User = (QLMB.Models.NhanVien)Session["EmployeeInfo"];
+    QLMB.Models.NhanVien Current = (QLMB.Models.NhanVien)Session["HumanResourceEmployeeTemp"];
 }
 
 @if (Session["Page"].ToString() == "EmployeeDetail" && User.MaChucVu.Trim() == Current.MaChucVu.Trim() && Current.MaChucVu.Trim() == "NS")
 {
-    @Html.DropDownListFor(model => model.MaChucVu, new SelectList(ChucVu_Singleton.Instance.ListChucVu, "MaChucVu", "TenCV", ChucVu_Singleton.Instance.CurrentRole), new { @class = "form-control", @disabled = "disabled" })
+    @Html.DropDownListFor(model => model.MaChucVu, new SelectList(Model.List, "MaChucVu", "TenCV", Model.CurrentEmployee), new { @class = "form-control", @disabled = "disabled" })
 }
 else
 {
-    @Html.DropDownListFor(model => model.MaChucVu, new SelectList(ChucVu_Singleton.Instance.ListChucVu, "MaChucVu", "TenCV", ChucVu_Singleton.Instance.CurrentRole), new { @class = "form-control" })
+    @Html.DropDownListFor(model => model.MaChucVu, new SelectList(Model.List, "MaChucVu", "TenCV", Model.CurrentEmployee), new { @class = "form-control" })
 }
+
+
