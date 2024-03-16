@@ -20,7 +20,6 @@ namespace QLMB.Models
                 char randomChar = characters[randomIndex];
                 builder.Append(randomChar);
             }
-
             return builder.ToString();
         }
         public static bool ExistPropertyID(string propertyId)

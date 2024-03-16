@@ -8,15 +8,27 @@
 <link rel="stylesheet" href="~/Resources/CSS/Profile.css">
 <script type="text/javascript" href="~/Resources/JavaScript/ProfilePage.css"></script>
 
-@using (Html.BeginForm(Html.BeginForm("Detail", "Event", FormMethod.Post, new
+@using (Html.BeginForm(Html.BeginForm("Duplicate", "Event", FormMethod.Post, new
 { enctype = "multipart/form-data" })))
 {
     @Html.AntiForgeryToken()
 
+    @Html.HiddenFor(model => model.MaDon)
+    @Html.HiddenFor(model => model.NgayLamDon)
+    @Html.HiddenFor(model => model.MaDM)
+    @Html.HiddenFor(model => model.TenDangNhap)
+    @Html.HiddenFor(model => model.TieuDe)
+    @Html.HiddenFor(model => model.MoTa)
+    @Html.HiddenFor(model => model.HinhBia)
+    @Html.HiddenFor(model => model.NgayBatDau)
+    @Html.HiddenFor(model => model.NgayKetThuc)
+    @Html.HiddenFor(model => model.MaNV)
+    @Html.HiddenFor(model => model.NgayDuyet)
+    @Html.HiddenFor(model => model.MATT)
 
     <div class="d-flex justify-content-between">
         @Html.ActionLink("< Quay lại", "returnLocal", "Event", null, new { @class = "btn btn-primary mb-0" })
-        <h4 class="font-weight-bold">Chi tiết</h4>
+        <h4 class="font-weight-bold">Tạo bản sao bài đăng</h4>
     </div>
 
     <!-- Thanh Sidebar -->
@@ -43,25 +55,11 @@
 
                             <div class="d-flex justify-content-between mb-2">
                                 <h4 div class="d-flex justify-content-start">Thông tin đơn</h4>
-
                                 <div class="d-flex justify-content-end">
-
-                                    @if (Model.MATT != 1)
-                                    {
-                                        <button type="submit" class="btn btn-warning" name="btn" value="Reset">Duyệt lại</button>
-                                    }
-                                    else
-                                    {
-                                        <button type="submit" class="btn btn-success ms-2" name="btn" value="Accept">Đồng ý</button>
-                                        <button type="submit" class="btn btn-danger ms-2" name="btn" value="Denied">Từ chối</button>
-                                    }
-                                    <button type="submit" class="btn btn-secondary ms-2" name="btn" value="Duplicate">Tạo bản sao</button>
-
-
+                                    <button type="submit" class="btn btn-success ms-2" name="btn" value="Accept">Đồng ý</button>
+                                    <button type="submit" class="btn btn-danger ms-2" name="btn" value="Denied">Từ chối</button>
                                 </div>
                             </div>
-
-
 
                             <!-- Tiêu đề -->
                             <div class="form-group mt-1">
@@ -75,7 +73,6 @@
                                 <!-- Mã đơn -->
                                 <div class="col">
                                     <label class="form-label">Mã đơn</label>
-                                    @Html.HiddenFor(model => model.MaDon)
                                     @Html.EditorFor(model => model.MaDon, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
                                 </div>
 

@@ -54,9 +54,10 @@
                             <td style="width:10%">@Html.DisplayFor(modelItem => item.TinhTrang.TenTT)</td>
 
 
-                            <td style="width:8%; text-align: left">
+                            <td style="width:12%; text-align: left; text-decoration: none">
                                 @*@Html.ActionLink("Chỉnh sửa", "ProductEdit", new { id = item.IDProduct }) |*@
-                                @Html.ActionLink("Chi tiết", "Detail", new { MaDon = item.MaDon })
+                                @Html.ActionLink("Chi tiết", "Detail", new { maDon = item.MaDon }) | 
+                                @Html.ActionLink("Bản sao", "Duplicate", new { maDon = item.MaDon })
                             </td>
                         </tr>
                     }
@@ -66,6 +67,7 @@
 
         </table>
     </div>
-
-
 }
+
+@*Hiện thông báo*@
+@Html.Raw(TempData["msg"])

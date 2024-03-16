@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using QLMB.Models.Process;
+using QLMB.Design_Pattern.Prototype.ConcretePrototype;
 
 namespace QLMB.Controllers
 {
@@ -11,14 +12,14 @@ namespace QLMB.Controllers
         private database db = new database();
 
         // GET: Event
-        public ActionResult EventMain(string NameSearch)
+        public ActionResult EventMain(string nameSearch)
         {
             try
             {
                 //Kiểm tra hợp lệ
                 if (checkRole())
                 {
-                    List<SuKienUuDai> data = Shared.listSKUD(db, NameSearch, "SK");
+                    List<SuKienUuDai> data = Shared.listSKUD(db, nameSearch, "SK");
 
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EventMain";
@@ -29,19 +30,18 @@ namespace QLMB.Controllers
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
-        public ActionResult SaleMain(string NameSearch)
+        public ActionResult SaleMain(string nameSearch)
         {
             try
             {
                 //Kiểm tra hợp lệ
                 if (checkRole())
                 {
-                    List<SuKienUuDai> data = Shared.listSKUD(db, NameSearch, "UD");
+                    List<SuKienUuDai> data = Shared.listSKUD(db, nameSearch, "UD");
                     
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "SaleMain";
@@ -49,16 +49,14 @@ namespace QLMB.Controllers
                     Session.Remove("EventTemp");
                     return View(data);
                 }
-
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
-        public ActionResult Detail(string MaDon)
+        public ActionResult Detail(string maDon)
         {
             try
             {
@@ -67,12 +65,13 @@ namespace QLMB.Controllers
                 {
                     SuKienUuDai info = new SuKienUuDai();
 
-                    if ((MaDon == null || MaDon == "") && Session["EventTemp"] != null)
+                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null)
+                    {
                         info = (SuKienUuDai)Session["EventTemp"];
-
+                    }    
                     else
                     {
-                        info = db.SuKienUuDais.Where(s => s.MaDon == MaDon).FirstOrDefault();
+                        info = db.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
                         Session["EventTemp"] = info;
                     }
 
@@ -83,7 +82,36 @@ namespace QLMB.Controllers
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
+            //Lỗi xử lý --> Skill Issue :))
+            catch { return RedirectToAction("Index", "SkillIssue"); }
+        }
 
+        public ActionResult Duplicate(string maDon)
+        {
+            try
+            {
+                //Kiểm tra hợp lệ
+                if (checkRole() || Session["Page"] != null)
+                {
+                    SuKienUuDai info = new SuKienUuDai();
+
+                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null)
+                    {
+                        info = (SuKienUuDai)Session["EventTemp"];
+                    }      
+                    else
+                    {
+                        info = db.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
+                        Session["EventTemp"] = info;
+                    }
+
+                    //Dùng để xử lý về lại trang trước đó
+                    Session["Page"] = "EventDuplicate";
+                    return View(info);
+                }
+                //Không thoả --> Về trang xử lý chuyển trang
+                return RedirectToAction("Manager", "Account");
+            }
             //Lỗi xử lý --> Skill Issue :))
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
@@ -91,20 +119,46 @@ namespace QLMB.Controllers
         [HttpPost]
         public ActionResult Detail(SuKienUuDai info, string btn)
         {
+            if(btn == "Duplicate")
+            {
+                return RedirectToAction("Duplicate", "Event", new {maDon = info.MaDon });
+            }
+
             string MaNV = ((NhanVien)Session["EmployeeInfo"]).MaNV;
             (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(info.MaDon, MaNV, btn);
             if (saveVerified.Item1)
             {
                 TempData["msg"] = $"<script>alert('{saveVerified.Item2}');</script>";
-                return RedirectToAction("Detail", "Event", new { MaDon = info.MaDon });
+                return RedirectToAction("Detail", "Event", new {maDon = info.MaDon });
             }
                 
             ModelState.AddModelError("VerifiedFaield", saveVerified.Item2);
             return View(saveVerified.Item3);
-
-            
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Duplicate(SuKienUuDai info, string btn)
+        {
+            if (btn == "Accept")
+            {
+                ConcreteClonePost post = new ConcreteClonePost();
+                post.info = info;
+                ConcreteClonePost clonePost = (ConcreteClonePost)post.Clone();
+
+                int nextID = Shared.CreateIDSKUD(db, clonePost.info.MaDM);
+                clonePost.info.MaDon = clonePost.info.MaDM + $"{nextID:0000}";
+                db.SuKienUuDais.Add(clonePost.info);
+                db.SaveChanges();
+
+                TempData["msg"] = $"<script>alert('{"Tạo bản sao thành công"}');</script>";
+                return RedirectToAction("returnLocal", "Event");
+            }
+            else
+            {
+                return RedirectToAction("returnLocal", "Event");
+            }
+        }
 
         //Kiểm tra hợp lệ
         private bool checkRole()
