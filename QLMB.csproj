@@ -350,6 +350,7 @@
     <Content Include="Views\PropertyRent\Details.cshtml" />
     <Content Include="Views\PropertyRent\Index.cshtml" />
     <Content Include="Views\Payment\PaymentStatus.cshtml" />
+    <Content Include="Views\Event\Duplicate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

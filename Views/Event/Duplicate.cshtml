@@ -1,0 +1,158 @@
+﻿@model QLMB.Models.SuKienUuDai
+
+@{
+    ViewBag.Title = "Thông tin chi tiết";
+    Layout = "~/Views/Shared/_Manager.cshtml";
+}
+
+<link rel="stylesheet" href="~/Resources/CSS/Profile.css">
+<script type="text/javascript" href="~/Resources/JavaScript/ProfilePage.css"></script>
+
+@using (Html.BeginForm(Html.BeginForm("Duplicate", "Event", FormMethod.Post, new
+{ enctype = "multipart/form-data" })))
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="d-flex justify-content-between">
+        @Html.ActionLink("< Quay lại", "returnLocal", "Event", null, new { @class = "btn btn-primary mb-0" })
+        <h4 class="font-weight-bold">Tạo bản sao bài đăng</h4>
+    </div>
+
+    <!-- Thanh Sidebar -->
+    <div class="card overflow-hidden mt-1 d-flex">
+        <div class="row no-gutters row-bordered row-border-light">
+            <div class="col-md-4">
+                <div class="list-group list-group-flush account-settings-links">
+                    <div class="d-flex justify-content-center form-group col">
+                        <img src="@Url.Content(Model.HinhBia)" width="358px" height="358px" />
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            <div class="col-md-8">
+                <div class="tab-content">
+
+                    <!-- Trang Tổng quan -->
+
+                    <div class="tab-pane fade active show" id="account-general">
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <h4 div class="d-flex justify-content-start">Thông tin đơn</h4>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-success ms-2" name="btn" value="Accept">Đồng ý</button>
+                                    <button type="submit" class="btn btn-danger ms-2" name="btn" value="Denied">Từ chối</button>
+                                </div>
+                            </div>
+
+                            <!-- Tiêu đề -->
+                            <div class="form-group mt-1">
+                                <label class="form-label">Tiêu đề</label>
+                                <h4>@Html.DisplayFor(model => model.TieuDe)</h4>
+                            </div>
+
+                            <!-- Mã đơn - Ngày làm đơn - Tình trạng -->
+                            <div class="form-group row">
+
+                                <!-- Mã đơn -->
+                                <div class="col">
+                                    <label class="form-label">Mã đơn</label>
+                                    @Html.HiddenFor(model => model.MaDon)
+                                    @Html.EditorFor(model => model.MaDon, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                </div>
+
+                                <!-- Ngày làm đơn -->
+                                <div class="col">
+                                    <label class="form-label">Ngày làm đơn</label>
+                                    @Html.TextBoxFor(model => model.NgayLamDon, new { @type = "date", @class = "form-control ui-datepicker", @Value = @Model.NgayLamDon.ToString("yyyy-MM-dd"), disabled = "disabled" })
+                                </div>
+
+                                <!-- Tình trạng -->
+                                <div class="col">
+                                    <label class="form-label">Tình trạng</label>
+                                    @Html.EditorFor(model => model.TinhTrang.TenTT, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                </div>
+                            </div>
+
+                            <!-- Danh mục & Ngày bắt đầu & Ngày kết thúc -->
+                            <div class="form-group row">
+
+                                <!-- Danh mục -->
+                                <div class="col">
+                                    <label class="form-label">Danh mục</label>
+                                    @Html.EditorFor(model => model.DanhMuc.TenDM, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                </div>
+
+                                <!-- Ngày bắt đầu -->
+                                <div class="col">
+                                    <label class="form-label">Ngày bắt đầu</label>
+                                    @Html.TextBoxFor(model => model.NgayBatDau, new { @type = "date", @class = "form-control ui-datepicker", @Value = @Model.NgayBatDau.ToString("yyyy-MM-dd"), disabled = "disabled" })
+                                </div>
+
+                                <!-- Ngày kết thúc -->
+                                <div class="col">
+                                    <label class="form-label">Ngày kết thúc</label>
+                                    @Html.TextBoxFor(model => model.NgayKetThuc, new { @type = "date", @class = "form-control ui-datepicker", @Value = @Model.NgayKetThuc?.ToString("yyyy-MM-dd"), disabled = "disabled" })
+                                </div>
+
+                            </div>
+
+                            <!-- Người làm đơn -->
+                            <div class="form-group mt-1">
+                                <label class="form-label">Người làm đơn</label>
+                                @Html.EditorFor(model => model.NguoiThue.ThongTinND.HoTen, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                @Html.ValidationMessage("editAddress", new { @class = "text-danger mt-1" })
+                            </div>
+
+                            @if (Model.MATT != 1)
+                            {
+
+                                <div class="form-group row mt-4">
+                                    <h4> Thông tin người duyệt bài</h4>
+
+                                    <!-- Danh mục -->
+                                    <div class="col">
+                                        <label class="form-label">Mã nhân viên</label>
+                                        @Html.EditorFor(model => model.MaNV, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                    </div>
+
+                                    <!-- Ngày bắt đầu -->
+                                    <div class="col">
+                                        <label class="form-label">Người duyệt bài</label>
+                                        @Html.EditorFor(model => model.NhanVien.ThongTinND.HoTen, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                                    </div>
+
+                                    <!-- Ngày kết thúc -->
+                                    <div class="col">
+                                        <label class="form-label">Ngày duyệt</label>
+                                        @Html.TextBoxFor(model => model.NgayDuyet, new { @type = "date", @class = "form-control ui-datepicker", @Value = @Model.NgayDuyet?.ToString("yyyy-MM-dd"), disabled = "disabled" })
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.MoTa != null)
+                            {
+                                <div class="form-group mt-4">
+                                    <h4>Mô tả</h4>
+                                    <p>@Html.DisplayFor(model => model.MoTa)</p>
+                                </div>
+                            }
+
+                            @Html.ValidationMessage("VerifiedFaield", new { @class = "text-danger mt-1" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+
+@*Hiện thông báo*@
+@Html.Raw(TempData["msg"])
