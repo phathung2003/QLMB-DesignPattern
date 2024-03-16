@@ -1,4 +1,7 @@
-﻿using QLMB.Models;
+﻿using QLMB.Design_Pattern.Strategy.ConcreteFactory;
+using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
+using QLMB.Design_Pattern.Strategy.Context;
+using QLMB.Models;
 using QLMB.Models.Process;
 using System.Web.Mvc;
 
@@ -49,63 +52,46 @@ namespace QLMB.Controllers
         //Kiểm tra thông tin
         private bool checkInfo(ThongTinND thongTin, string username, string password, string rePassword)
         {
-            (bool, string) CMND = Validation.CMND(thongTin.CMND);
-            (bool, string) NgayCap = Validation.NgayCap(thongTin.NgayCap);
-            (bool, string) HoTen = Validation.HoTen(thongTin.HoTen);
-            (bool, string) GioiTinh = Validation.Gender(thongTin.GioiTinh);
-            (bool, string) NgaySinh = Validation.Birthday_25(thongTin.NgaySinh);
-            (bool, string) DiaChi = Validation.Address(thongTin.DiaChi);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            (bool, string) TenDangNhap = Validation.Username_8(username);
-            (bool, string) MatKhau = Validation.Password(password);
-            (bool, string) NhapLaiMatKhau = Validation.rePassword(password, rePassword);
-            
-            bool check = CMND.Item1 && NgayCap.Item1 && HoTen.Item1 && GioiTinh.Item1 &&
-                         NgaySinh.Item1 && DiaChi.Item1 && TenDangNhap.Item1 && MatKhau.Item1 && NhapLaiMatKhau.Item1;
-
-            if (check)
-                return true;
-
-            //CMND chưa nhập
-            if (!CMND.Item1)
-                ModelState.AddModelError("CMND", CMND.Item2);
-
+            //CMND
+            checkResult = new ContextStrategy(new ConcreteCMND(modelState, "CMND", info.CMND));
+            checkResult.GetResult();
 
             //Ngày cấp
-            if (!NgayCap.Item1) 
-                ModelState.AddModelError("NgayCapCMND", NgayCap.Item2);
+            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
+            checkResult.GetResult();
 
             //Họ tên
-            if (!HoTen.Item1)
-                ModelState.AddModelError("HoTen", HoTen.Item2);
-
+            checkResult.strategy = new ConcreteName(modelState, "HoTen", info.HoTen);
+            checkResult.GetResult();
 
             //Giới tính
-            if (!GioiTinh.Item1)
-                ModelState.AddModelError("GioiTinh", GioiTinh.Item2);
-
+            checkResult.strategy = new ConcreteGender(modelState, "GioiTinh", info.GioiTinh);
+            checkResult.GetResult();
 
             //Ngày sinh
-            if (!NgaySinh.Item1)
-                ModelState.AddModelError("NgaySinhND", NgaySinh.Item2);
-            
-            //Địa chỉ
-            if(!DiaChi.Item1)
-                ModelState.AddModelError("DiaChi", DiaChi.Item2);
+            checkResult.strategy = new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh, true);
+            checkResult.GetResult();
 
+            //Địa chỉ
+            checkResult.strategy = new ConcreteAddress(modelState, "DiaChi", info.DiaChi);
+            checkResult.GetResult();
 
             //Tên đăng nhập
-            if (!TenDangNhap.Item1)
-                ModelState.AddModelError("TenDangNhap", TenDangNhap.Item2);
+            checkResult.strategy = new ConcreteUsername(modelState, "TenDangNhap", username, true);
+            checkResult.GetResult();
 
             //Mật khẩu
-            if (!MatKhau.Item1)
-                ModelState.AddModelError("MatKhau", MatKhau.Item2);
+            checkResult.strategy = new ConcretePassword(modelState, "MatKhau", password);
+            checkResult.GetResult();
 
             //Nhập lại mật khẩu
-            if(!NhapLaiMatKhau.Item1)
-                ModelState.AddModelError("MatKhauLai", NhapLaiMatKhau.Item2); 
+            checkResult.strategy = new ConcreteRePassword(modelState, "MatKhauLai", password, rePassword);
+            checkResult.GetResult();
 
-            return false;
-        }    }
+            return checkResult.noError;
+        }    
+    }
 }
