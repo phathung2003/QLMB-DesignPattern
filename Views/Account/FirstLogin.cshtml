@@ -7,42 +7,44 @@
 
 <h2>Đăng nhập lần đầu</h2>
 
+<div class="mt-5">
+    <div>
+        <div>
+            <div class="container-fluid">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-5">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
 
+                                @Html.HiddenFor(model => model.MaNV)
+                                <div class="row mb-3">
+                                    <p class="text-center mt-3 mb-3">Xin vui lòng đặt lại mật khẩu</p>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="TenDangNhap">Mật khẩu mới</label>
+                                    @Html.PasswordFor(model => model.MatKhau, new { @class = "form-control" })
+                                    @Html.ValidationMessage("employeePass", new { @class = "text-danger mt-1" })
+                                </div>
 
-<section class="section">
-    <p class="text-center mt-3 mb-3">Xin vui lòng đặt lại mật khẩu</p>
-    <div class="container-fluid">
-        <div class="col">
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    @using (Html.BeginForm())
-                    {
-                        @Html.AntiForgeryToken()
+                                <div class="row mb-3">
+                                    <label for="rePass">Nhập lại mật khẩu</label>
+                                    <input type="password" name="rePass" class="form-control" />
+                                    @Html.ValidationMessage("reEmployeePass", new { @class = "text-danger mt-1" })
+                                </div>
 
-                        @Html.HiddenFor(model => model.MaNV)
-
-                        <div class="row mb-3">
-                            <label for="TenDangNhap">Mật khẩu mới</label>
-                            @Html.PasswordFor(model => model.MatKhau, new { @class = "form-control" })
-                            @Html.ValidationMessage("employeePass", new { @class = "text-danger mt-1" })
+                                @Html.ValidationMessage("changeError", new { @class = "text-danger mt-1" })
+                                <div class="row mb-3">
+                                    <input type="submit" class="btn btn-success" value="Đặt lại mật khẩu" />
+                                </div>
+                            }
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="rePass">Nhập lại mật khẩu</label>
-                            <input type="password" name="rePass" class="form-control" />
-                            @Html.ValidationMessage("reEmployeePass", new { @class = "text-danger mt-1" })
-                        </div>
-
-                        @Html.ValidationMessage("changeError", new { @class = "text-danger mt-1" })
-                        <div class="row mb-3">
-                            <input type="submit" class="btn btn-success" value="Đặt lại mật khẩu" />
-                        </div>
-                    }
+                        <div class="col-md-3"></div>
+                    </div>
                 </div>
-                <div class="col-md-4"></div>
             </div>
         </div>
     </div>
-</section>
-
+</div>

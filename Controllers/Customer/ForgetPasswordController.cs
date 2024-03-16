@@ -1,6 +1,9 @@
 ﻿using QLMB.Models;
 using System.Web.Mvc;
 using QLMB.Models.Process;
+using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
+using QLMB.Design_Pattern.Strategy.Context;
+using QLMB.Design_Pattern.Strategy.ConcreteFactory;
 
 namespace QLMB.Controllers
 {
@@ -53,16 +56,15 @@ namespace QLMB.Controllers
         //Check CMND người thuê
         private bool checkInfo(string CMND)
         {
-            (bool, string) checkCMND = Validation.CMND(CMND);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if (checkCMND.Item1)
-                return true;
+            //CMND
+            checkResult = new ContextStrategy(new ConcreteCMND(modelState, "inputCMND", CMND, false));
+            checkResult.GetResult();
 
-            ModelState.AddModelError("inputCMND", checkCMND.Item2);
-            return false;
+            return checkResult.noError;
         }
-
-
 
 
         //----------- Người thuê -----------//
@@ -74,8 +76,6 @@ namespace QLMB.Controllers
             else
                 return RedirectToAction("ForgetPassword", "ForgetPassword");
         }
-
-
 
         //Cập nhật mật khẩu
         [HttpPost]
@@ -113,22 +113,18 @@ namespace QLMB.Controllers
         //Check mật khẩu mới
         private bool checkRePassword(NguoiThue nguoiThue, string rePass)
         {
-            (bool, string) password = Validation.Password(nguoiThue.MatKhau);
-            (bool, string) rePassword = Validation.rePassword(nguoiThue.MatKhau, rePass);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if(password.Item1 && rePassword.Item1)
-                return true;
-            
             //Mật khẩu
-            if (!password.Item1)
-                ModelState.AddModelError("resetPassword", password.Item2);
-
+            checkResult = new ContextStrategy(new ConcretePassword(modelState, "resetPassword", nguoiThue.MatKhau));
+            checkResult.GetResult();
 
             //Nhập lại mật khẩu
-            if (!rePassword.Item1)
-                ModelState.AddModelError("reResetPassword", rePassword.Item2);
+            checkResult.strategy = new ConcreteRePassword(modelState, "reResetPassword", nguoiThue.MatKhau, rePass);
+            checkResult.GetResult();
 
-            return false;
+            return checkResult.noError;
         }
     }
 }

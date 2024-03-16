@@ -235,10 +235,6 @@ namespace QLMB.Models
 
 
 
-
-
-
-
         //Check Chứng minh nhân dân đã tồn tại
         public static (bool, string) ExistCMND(string value)
         {
