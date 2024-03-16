@@ -30,7 +30,6 @@ namespace QLMB.Controllers
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
@@ -50,7 +49,6 @@ namespace QLMB.Controllers
                     Session.Remove("EventTemp");
                     return View(data);
                 }
-
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
@@ -68,8 +66,9 @@ namespace QLMB.Controllers
                     SuKienUuDai info = new SuKienUuDai();
 
                     if ((maDon == null || maDon == "") && Session["EventTemp"] != null)
+                    {
                         info = (SuKienUuDai)Session["EventTemp"];
-
+                    }    
                     else
                     {
                         info = db.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
@@ -83,7 +82,6 @@ namespace QLMB.Controllers
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
@@ -100,8 +98,7 @@ namespace QLMB.Controllers
                     if ((maDon == null || maDon == "") && Session["EventTemp"] != null)
                     {
                         info = (SuKienUuDai)Session["EventTemp"];
-                    }    
-                        
+                    }      
                     else
                     {
                         info = db.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
@@ -115,7 +112,6 @@ namespace QLMB.Controllers
                 //Không thoả --> Về trang xử lý chuyển trang
                 return RedirectToAction("Manager", "Account");
             }
-
             //Lỗi xử lý --> Skill Issue :))
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
@@ -127,6 +123,7 @@ namespace QLMB.Controllers
             {
                 return RedirectToAction("Duplicate", "Event", new {maDon = info.MaDon });
             }
+
             string MaNV = ((NhanVien)Session["EmployeeInfo"]).MaNV;
             (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(info.MaDon, MaNV, btn);
             if (saveVerified.Item1)
