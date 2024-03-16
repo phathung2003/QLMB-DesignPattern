@@ -51,7 +51,11 @@ namespace QLMB.Controllers
                 //Trang chi tiết (Sự kiện ưu đãi)
                 case "EventDetail":
                     return RedirectToAction("Detail", "Event");
-                
+
+                //Trang tạo bản sao
+                case "EventDuplicate":
+                    return RedirectToAction("Duplicate", "Event");
+
                 //Trang quản lý nhân viên
                 case "EmployeeMain":
                     return RedirectToAction("Main", "HumanResource");

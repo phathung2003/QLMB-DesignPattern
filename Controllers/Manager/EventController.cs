@@ -123,18 +123,21 @@ namespace QLMB.Controllers
         [HttpPost]
         public ActionResult Detail(SuKienUuDai info, string btn)
         {
+            if(btn == "Duplicate")
+            {
+                return RedirectToAction("Duplicate", "Event", new {maDon = info.MaDon });
+            }
             string MaNV = ((NhanVien)Session["EmployeeInfo"]).MaNV;
             (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(info.MaDon, MaNV, btn);
             if (saveVerified.Item1)
             {
                 TempData["msg"] = $"<script>alert('{saveVerified.Item2}');</script>";
-                return RedirectToAction("Detail", "Event", new { MaDon = info.MaDon });
+                return RedirectToAction("Detail", "Event", new {maDon = info.MaDon });
             }
                 
             ModelState.AddModelError("VerifiedFaield", saveVerified.Item2);
             return View(saveVerified.Item3);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
