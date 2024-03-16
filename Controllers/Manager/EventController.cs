@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using QLMB.Models.Process;
+using QLMB.Design_Pattern.Prototype.ConcretePrototype;
 
 namespace QLMB.Controllers
 {
@@ -136,17 +137,26 @@ namespace QLMB.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Duplicate(SuKienUuDai info, string btn)
         {
             if (btn == "Accept")
             {
-                TempData["msg"] = $"<script>alert('{"Hi"}');</script>";
-                return RedirectToAction("returnLocal", "Event", new { MaDon = info.MaDon });
+                ConcreteClonePost post = new ConcreteClonePost();
+                post.info = info;
+                ConcreteClonePost clonePost = (ConcreteClonePost)post.Clone();
+
+                int nextID = Shared.CreateIDSKUD(db, clonePost.info.MaDM);
+                clonePost.info.MaDon = clonePost.info.MaDM + $"{nextID:0000}";
+                db.SuKienUuDais.Add(clonePost.info);
+                db.SaveChanges();
+
+                TempData["msg"] = $"<script>alert('{"Tạo bản sao thành công"}');</script>";
+                return RedirectToAction("returnLocal", "Event");
             }
             else
             {
-                TempData["msg"] = $"<script>alert('{"Bye"}');</script>";
-                return RedirectToAction("returnLocal", "Event", new { MaDon = info.MaDon });
+                return RedirectToAction("returnLocal", "Event");
             }
         }
 

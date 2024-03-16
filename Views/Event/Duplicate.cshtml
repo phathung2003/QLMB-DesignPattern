@@ -13,6 +13,22 @@
 {
     @Html.AntiForgeryToken()
 
+    @Html.HiddenFor(model => model.MaDon)
+    @Html.HiddenFor(model => model.NgayLamDon)
+    @Html.HiddenFor(model => model.MaDM)
+    @Html.HiddenFor(model => model.TenDangNhap)
+    @Html.HiddenFor(model => model.TieuDe)
+    @Html.HiddenFor(model => model.MoTa)
+    @Html.HiddenFor(model => model.HinhBia)
+    @Html.HiddenFor(model => model.NgayBatDau)
+    @Html.HiddenFor(model => model.NgayKetThuc)
+    @Html.HiddenFor(model => model.MaNV)
+    @Html.HiddenFor(model => model.NgayDuyet)
+    @Html.HiddenFor(model => model.MATT)
+    @Html.HiddenFor(model => model.DanhMuc)
+    @Html.HiddenFor(model => model.NguoiThue)
+    @Html.HiddenFor(model => model.NhanVien)
+    @Html.HiddenFor(model => model.TinhTrang)
 
     <div class="d-flex justify-content-between">
         @Html.ActionLink("< Quay lại", "returnLocal", "Event", null, new { @class = "btn btn-primary mb-0" })
@@ -61,7 +77,6 @@
                                 <!-- Mã đơn -->
                                 <div class="col">
                                     <label class="form-label">Mã đơn</label>
-                                    @Html.HiddenFor(model => model.MaDon)
                                     @Html.EditorFor(model => model.MaDon, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
                                 </div>
 

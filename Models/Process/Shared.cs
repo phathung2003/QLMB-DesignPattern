@@ -24,6 +24,24 @@ namespace QLMB.Models.Process
             return STT;
         }
 
+        public static int CreateIDSKUD(database db, string danhMuc)
+        {
+            List<SuKienUuDai> forms = db.SuKienUuDais.Where(s => s.DanhMuc.MaDM == danhMuc).ToList();
+
+            int STT = 0;
+            int CharLength = danhMuc.Trim().Length;
+
+            foreach (SuKienUuDai form in forms)
+            {
+                string MaNV = form.MaDon.Trim().Substring(CharLength);
+                if (int.Parse(MaNV) != STT)
+                    break;
+
+                STT++;
+            }
+            return STT;
+        }
+
         public static List<SuKienUuDai> listSKUD(database db, string NameSearch, string type)
         {
 
