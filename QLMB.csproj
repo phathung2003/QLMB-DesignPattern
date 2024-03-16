@@ -141,6 +141,19 @@
     <Compile Include="Controllers\Payment\PaymentController.cs" />
     <Compile Include="Controllers\SkillIssueController.cs" />
     <Compile Include="Design_Pattern\Singleton\ChucVu_Singleton.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteAddress.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteBirthday.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteCMND.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteCurrentPassword.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteGender.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteName.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcretePassword.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteRePassword.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteRole.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteUsername.cs" />
+    <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteIssuanceDate.cs" />
+    <Compile Include="Design_Pattern\Strategy\Context\ContextStrategy.cs" />
+    <Compile Include="Design_Pattern\Strategy\Interface\IValidation.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

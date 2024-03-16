@@ -3,12 +3,16 @@ using System.Linq;
 using System.Web.Mvc;
 using QLMB.Models.Process;
 using QLMB.Design_Pattern.Singleton;
+using QLMB.Design_Pattern.Strategy.Context;
+using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
+using QLMB.Design_Pattern.Strategy.ConcreteFactory;
 
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
     {
         private database database = new database();
+
 
         //Trang chủ
         public ActionResult Main(string nameSearch)
@@ -88,7 +92,7 @@ namespace QLMB.Controllers
                 if (Edit.EmployeeStatus(employee, button))
                     return RedirectToAction("Detail", "HumanResource", new { CMND = info.CMND.Trim() });
 
-                ModelState.AddModelError("editStatus", "Đổi thông tin thất bại");
+                
             }
 
             string currentCMND = ((NhanVien)Session["HumanResourceEmployeeTemp"]).CMND.Trim();
@@ -110,6 +114,10 @@ namespace QLMB.Controllers
                     return RedirectToAction("Detail", "HumanResource", new { CMND = info.CMND.Trim() });
                 }
                 ModelState.AddModelError("editStatus", saveDetail.Item2);
+            }
+            else
+            {
+                ModelState.AddModelError("editStatus", "Đổi thông tin thất bại");
             }
             return View(info);
         }
@@ -191,49 +199,41 @@ namespace QLMB.Controllers
         //Kiểm tra thông tin đăng ký
         private bool CheckEmployeeInfo(ThongTinND info, ChucVu role)
         {
-            (bool, string) CMND = Validation.ExistCMND(info.CMND);
-            (bool, string) NgayCap = Validation.NgayCap(info.NgayCap);
-            (bool, string) HoTen = Validation.HoTen(info.HoTen);
-            (bool, string) GioiTinh = Validation.Gender(info.GioiTinh);
-            (bool, string) NgaySinh = Validation.Birthday_25(info.NgaySinh);
-            (bool, string) DiaChi = Validation.Address(info.DiaChi);
-            (bool, string) ChucVu = Validation.Role(role.MaChucVu);
-
-            bool check = CMND.Item1 && NgayCap.Item1 && HoTen.Item1 && GioiTinh.Item1 && NgaySinh.Item1 && DiaChi.Item1 && ChucVu.Item1;
-
-            if (check)
-                return true;
-
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
+            
             //CMND
-            if (!CMND.Item1)
-                ModelState.AddModelError("CMND", CMND.Item2);
+            checkResult = new ContextStrategy(new ConcreteCMND(modelState, "CMND", info.CMND));
+            checkResult.GetResult();
 
             //Ngày cấp
-            if (!NgayCap.Item1)
-                ModelState.AddModelError("NgayCapCMND", NgayCap.Item2);
+            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
+            checkResult.GetResult();
 
             //Họ tên
-            if (!HoTen.Item1)
-                ModelState.AddModelError("HoTen", HoTen.Item2);
-
+            checkResult.strategy = new ConcreteName(modelState, "HoTen", info.HoTen);
+            checkResult.GetResult();
 
             //Giới tính
-            if (!GioiTinh.Item1)
-                ModelState.AddModelError("GioiTinh", GioiTinh.Item2);
-
+            checkResult.strategy = new ConcreteGender(modelState, "GioiTinh", info.GioiTinh);
+            checkResult.GetResult();
 
             //Ngày sinh
-            if (!NgaySinh.Item1)
-                ModelState.AddModelError("NgaySinhND", NgaySinh.Item2);
-
+            checkResult.strategy = new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh,true);
+            checkResult.GetResult();
 
             //Địa chỉ
-            if (!DiaChi.Item1)
-                ModelState.AddModelError("DiaChi", DiaChi.Item2);
+            checkResult.strategy = new ConcreteAddress(modelState, "DiaChi", info.DiaChi);
+            checkResult.GetResult();
 
             //Chức vụ
-            if (!ChucVu.Item1)
-                ModelState.AddModelError("ChonChucVu", ChucVu.Item2);
+            checkResult.strategy = new ConcreteRole(modelState, "ChonChucVu", role.MaChucVu);
+            checkResult.GetResult();
+
+            if (checkResult.noError)
+            {
+                return true;
+            }
 
             Session["TempRole"] = role.MaChucVu;
             return false;
@@ -243,35 +243,38 @@ namespace QLMB.Controllers
         private bool CheckEditInfo(ThongTinND info, ChucVu role, string currentCMND)
         {
             NhanVien user = (NhanVien)Session["EmployeeInfo"];
-            NhanVien current = (NhanVien)Session["HumanResourceEmployeeTemp"];
 
-            (bool, string) HoTen = Validation.HoTen(info.HoTen);
-            (bool, string) NgaySinh = Validation.Birthday_25(info.NgaySinh);
-            (bool, string) CMND = Validation.CMNDEdit(currentCMND, info.CMND);
-            (bool, string) NgayCap = Validation.NgayCap(info.NgayCap);
-            (bool, string) DiaChi = Validation.Address(info.DiaChi);
-            (bool, string) ChucVu = Validation.RoleEdit(role.MaChucVu, user.MaChucVu, current.MaChucVu);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if (HoTen.Item1 && NgaySinh.Item1 && CMND.Item1 && NgayCap.Item1 && DiaChi.Item1 && ChucVu.Item1)
+            //Họ tên
+            checkResult = new ContextStrategy(new ConcreteName(modelState, "editName", info.HoTen));
+            checkResult.GetResult();
+
+            //Ngày sinh
+            checkResult.strategy = new ConcreteBirthday(modelState, "editNgaySinh", info.NgaySinh, true);
+            checkResult.GetResult();
+
+            //CMND
+            checkResult = new ContextStrategy(new ConcreteCMND(modelState, "editCMND", currentCMND, info.CMND));
+            checkResult.GetResult();
+
+            //Ngày cấp
+            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
+            checkResult.GetResult();
+
+            //Địa chỉ
+            checkResult.strategy = new ConcreteAddress(modelState, "editAddress", info.DiaChi);
+            checkResult.GetResult();
+
+            //Chức vụ
+            checkResult.strategy = new ConcreteRole(modelState, "editRole", user.MaChucVu, role.MaChucVu);
+            checkResult.GetResult();
+
+            if (checkResult.noError)
+            {
                 return true;
-
-            if (!HoTen.Item1)
-                ModelState.AddModelError("editName", HoTen.Item2);
-
-            if (!NgaySinh.Item1)
-                ModelState.AddModelError("editNgaySinh", NgaySinh.Item2);
-
-            if (!CMND.Item1)
-                ModelState.AddModelError("editCMND", CMND.Item2);
-
-            if (!NgayCap.Item1)
-                ModelState.AddModelError("editNgayCap", NgayCap.Item2);
-
-            if (!DiaChi.Item1)
-                ModelState.AddModelError("editAddress", DiaChi.Item2);
-
-            if (!ChucVu.Item1)
-                ModelState.AddModelError("editRole", ChucVu.Item2);
+            }
 
             Session["TempRole"] = role.MaChucVu;
             return false;

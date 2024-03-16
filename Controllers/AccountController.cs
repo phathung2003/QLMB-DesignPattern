@@ -1,4 +1,7 @@
-﻿using QLMB.Models;
+﻿using QLMB.Design_Pattern.Strategy.ConcreteFactory;
+using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
+using QLMB.Design_Pattern.Strategy.Context;
+using QLMB.Models;
 using QLMB.Models.Process;
 using System.Linq;
 using System.Web.Mvc;
@@ -193,65 +196,60 @@ namespace QLMB.Controllers
         //*-- Kiểm tra Đăng nhập lần đầu --*//
         private bool checkFirstTime(NhanVien info, string rePass)
         {
-            (bool, string) MatKhau = Validation.Password(info.MatKhau);
-            (bool, string) NhapLaiMatKhau = Validation.rePassword(info.MatKhau, rePass);
-
-            if (MatKhau.Item1 && NhapLaiMatKhau.Item1)
-                return true;
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
             //Mật khẩu
-            if (!MatKhau.Item1)
-                ModelState.AddModelError("employeePass", MatKhau.Item2);
+            checkResult = new ContextStrategy(new ConcretePassword(modelState, "employeePass", info.MatKhau));
+            checkResult.GetResult();
 
             //Nhập lại mật khẩu
-            if (!NhapLaiMatKhau.Item1)
-                ModelState.AddModelError("reEmployeePass", NhapLaiMatKhau.Item2);
+            checkResult.strategy = new ConcreteRePassword(modelState, "reEmployeePass", info.MatKhau, rePass);
+            checkResult.GetResult();
 
-            return false;
+            return checkResult.noError;
         }
 
         //*-- Kiểm tra Tổng quát --*//
         private bool checkGeneral(ThongTinND info)
         {
-            (bool, string) HoTen = Validation.HoTen(info.HoTen);
-            (bool, string) NgayCap = Validation.NgayCap(info.NgayCap);
-            (bool, string) DiaChi = Validation.Address(info.DiaChi);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if (HoTen.Item1 && NgayCap.Item1 && DiaChi.Item1)
-                return true;
+            //Họ tên
+            checkResult = new ContextStrategy(new ConcreteName(modelState, "generalName", info.HoTen));
+            checkResult.GetResult();
 
-            if (!HoTen.Item1)
-                ModelState.AddModelError("generalName", HoTen.Item2);
+            //Ngày cấp
+            checkResult.strategy = new ConcreteIssuanceDate(modelState, "generalNgayCap", info.NgayCap);
+            checkResult.GetResult();
 
-            if (!NgayCap.Item1)
-                ModelState.AddModelError("generalNgayCap", NgayCap.Item2);
+            //Địa chỉ
+            checkResult.strategy = new ConcreteAddress(modelState, "generalAddress", info.DiaChi);
+            checkResult.GetResult();
 
-            if (!DiaChi.Item1)
-                ModelState.AddModelError("generalAddress", DiaChi.Item2);
-
-            return false;
+            return checkResult.noError;
         }
 
         //*-- Kiểm tra Đổi mật khẩu --*//
         private bool checkChangePassword(NhanVien info, string current, string rePass)
         {
-            (bool, string) currentPassword = Validation.CurrentPasswordEmployee(info.MaNV, current);
-            (bool, string) password = Validation.Password(info.MatKhau);
-            (bool, string) rePassword = Validation.Password(rePass);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if(currentPassword.Item1 && password.Item1 && rePassword.Item1)
-                 return true;
+            //Mật khẩu trước đó
+            checkResult = new ContextStrategy(new ConcreteCurrentPassword(modelState, "changeCurrentPassword", info.MaNV, current));
+            checkResult.GetResult();
 
-            if(!currentPassword.Item1)
-                ModelState.AddModelError("changeCurrentPassword", currentPassword.Item2);
+            //Nhập mật khẩu mới
+            checkResult.strategy = new ConcretePassword(modelState, "changePassword", info.MatKhau);
+            checkResult.GetResult();
 
-            if(!password.Item1)
-                ModelState.AddModelError("changePassword", password.Item2);
-            
-            if(!rePassword.Item1)
-                ModelState.AddModelError("changeRePassword", rePassword.Item2);
+            //Nhập lại mật khẩu mới
+            checkResult.strategy = new ConcreteRePassword(modelState, "changeRePassword", info.MatKhau, rePass);
+            checkResult.GetResult();
 
-            return false;
+            return checkResult.noError;
         }
     }
 }
