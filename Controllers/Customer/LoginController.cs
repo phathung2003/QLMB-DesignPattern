@@ -1,4 +1,6 @@
-﻿using QLMB.Models;
+﻿using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
+using QLMB.Design_Pattern.Strategy.Context;
+using QLMB.Models;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -94,20 +96,28 @@ namespace QLMB.Controllers
 
         //Kiểm tra thông tin đăng nhập
         //Người thuê
-        private bool rentalCheckLogin(string TenDangNhap, string MatKhau)
+        private bool rentalCheckLogin(string username, string password)
         {
-            (bool, string) username = Validation.Username(TenDangNhap);
-            (bool, string) password = Validation.Password(MatKhau);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if (username.Item1 && password.Item1)
+            //Username
+            checkResult = new ContextStrategy(new ConcreteUsername(modelState, "inputUsername", username));
+            checkResult.GetResult();
+
+            //Password
+            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.GetResult();
+
+            if (checkResult.noError)
             {
-                (bool, string, NguoiThue) checkLogin = Validation.checkLoginRental(TenDangNhap, MatKhau);
+                (bool, string, NguoiThue) checkLogin = Validation.checkLoginRental(username, password);
 
                 if (checkLogin.Item1)
                 {
                     ThongTinND data = db.ThongTinNDs.Where(a => a.CMND == checkLogin.Item3.CMND).First();
                     Session["AccountName"] = data.HoTen;
-                    Session["DX_TenDangNhap"] = TenDangNhap;
+                    Session["DX_TenDangNhap"] = username;
 
                     return true;
                 }
@@ -115,25 +125,27 @@ namespace QLMB.Controllers
                 return false;
             }
 
-            if (!username.Item1)
-                ModelState.AddModelError("inputUsername", username.Item2);
-                
-            if (!password.Item1)
-                ModelState.AddModelError("inputPassword", password.Item2);
-
             //Thông tin sai
             return false;
         }
 
         //Nhân viên
-        private (bool, NhanVien) ManagerCheckLogin(string MaNV, string MatKhau)
+        private (bool, NhanVien) ManagerCheckLogin(string maNV, string password)
         {
-            (bool, string) username = Validation.Username(MaNV);
-            (bool, string) password = Validation.Password(MatKhau);
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
 
-            if (username.Item1 && password.Item1)
+            //Username
+            checkResult = new ContextStrategy(new ConcreteUsername(modelState, "inputUsername", maNV));
+            checkResult.GetResult();
+
+            //Password
+            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.GetResult();
+
+            if (checkResult.noError)
             {
-                (bool, string, NhanVien) checkLogin = Validation.checkLoginEmployee(MaNV, MatKhau);
+                (bool, string, NhanVien) checkLogin = Validation.checkLoginEmployee(maNV, password);
 
                 //Thấy thông tin => Thông tin đúng
                 if (checkLogin.Item1)
@@ -156,14 +168,6 @@ namespace QLMB.Controllers
                 else
                     ModelState.AddModelError("Error", checkLogin.Item2);
             }
-
-
-            if (!username.Item1)
-                ModelState.AddModelError("inputUsername", username.Item2);
-
-            if (!password.Item1)
-                ModelState.AddModelError("inputPassword", password.Item2);
-              
 
             //Thông tin sai
             return (false, null);
