@@ -149,6 +149,10 @@
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\ConcreteHandler\ConcreteCreateAccount.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\Interface\IHandlerEmployeeRegister.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\PhraseType.cs" />
+    <Compile Include="Design_Pattern\Factory\LoginCheckerFactory.cs" />
+    <Compile Include="Design_Pattern\Factory\ILoginChecker.cs" />
+    <Compile Include="Design_Pattern\Factory\ManagerLoginChecker.cs" />
+    <Compile Include="Design_Pattern\Factory\RentalLoginChecker.cs" />
     <Compile Include="Design_Pattern\Prototype\ConcretePrototype\ConcreteClonePost.cs" />
     <Compile Include="Design_Pattern\Prototype\Interface\IEventSalePost.cs" />
     <Compile Include="Design_Pattern\Singleton\ChucVu_Singleton.cs" />
