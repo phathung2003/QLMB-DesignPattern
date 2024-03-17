@@ -197,7 +197,7 @@ namespace QLMB.Controllers
 
 
 
-        //*-- Kiểm tra Đăng nhập lần đầu --*//
+        //*-- Kiểm tra Đăng nhập lần đầu --*// - [Strategy Pattern]
         private bool checkFirstTime(NhanVien info, string rePass)
         {
             ModelStateDictionary modelState = this.ModelState;
@@ -214,7 +214,7 @@ namespace QLMB.Controllers
             return checkResult.noError;
         }
 
-        //*-- Kiểm tra Tổng quát --*//
+        //*-- Kiểm tra Tổng quát --*// - [Strategy Pattern]
         private bool checkGeneral(ThongTinND info)
         {
             ModelStateDictionary modelState = this.ModelState;
@@ -235,7 +235,7 @@ namespace QLMB.Controllers
             return checkResult.noError;
         }
 
-        //*-- Kiểm tra Đổi mật khẩu --*//
+        //*-- Kiểm tra Đổi mật khẩu --*// - [Strategy Pattern]
         private bool checkChangePassword(NhanVien info, string current, string rePass)
         {
             ModelStateDictionary modelState = this.ModelState;

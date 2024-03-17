@@ -49,7 +49,7 @@ namespace QLMB.Controllers
             return View();
         }
 
-        //Kiểm tra thông tin
+        //Kiểm tra thông tin - [Strategy Pattern]
         private bool checkInfo(ThongTinND thongTin, string username, string password, string rePassword)
         {
             ModelStateDictionary modelState = this.ModelState;

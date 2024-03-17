@@ -91,8 +91,6 @@ namespace QLMB.Controllers
             {
                 if (Edit.EmployeeStatus(employee, button))
                     return RedirectToAction("Detail", "HumanResource", new { CMND = info.CMND.Trim() });
-
-                
             }
 
             string currentCMND = ((NhanVien)Session["HumanResourceEmployeeTemp"]).CMND.Trim();
@@ -165,14 +163,13 @@ namespace QLMB.Controllers
             return View();
         }
 
-        
-        //Chọn Chức vụ
+
+        //Chọn Chức vụ - [Singleton Pattern]
         public ActionResult SelectRole(string CMND)
         {
             if (CheckRole() && Session["Page"] != null)
             {
                 ChucVu role = new ChucVu();
-
                 //Đã xảy ra lỗi
                 if (Session["TempRole"] != null)
                 {
@@ -196,7 +193,7 @@ namespace QLMB.Controllers
         }
 
         //*-- Xử lý --*//
-        //Kiểm tra thông tin đăng ký
+        //Kiểm tra thông tin đăng ký - [Strategy Pattern]
         private bool CheckEmployeeInfo(ThongTinND info, ChucVu role)
         {
             ModelStateDictionary modelState = this.ModelState;
@@ -239,7 +236,7 @@ namespace QLMB.Controllers
             return false;
         }
 
-        //Kiểm tra thông tin edit
+        //Kiểm tra thông tin edit - [Strategy Pattern]
         private bool CheckEditInfo(ThongTinND info, ChucVu role, string currentCMND)
         {
             NhanVien user = (NhanVien)Session["EmployeeInfo"];
