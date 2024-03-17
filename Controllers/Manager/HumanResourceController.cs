@@ -6,13 +6,15 @@ using QLMB.Design_Pattern.Singleton;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.ConcreteFactory;
+using QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler;
+using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
+using QLMB.Design_Pattern.Chain_Of_Responsibility;
 
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
     {
         private database database = new database();
-
 
         //Trang chủ
         public ActionResult Main(string nameSearch)
@@ -140,25 +142,27 @@ namespace QLMB.Controllers
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
-        //Xử lý thông tin
+        //Xử lý thông tin đăng ký - [Chain Of Responsibility Pattern]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Register(ThongTinND info, ChucVu role)
         {
-            if (CheckEmployeeInfo(info, role))
+            IHandlerEmployeeRegister checkInput = new ConcreteCheckInput();
+            IHandlerEmployeeRegister checkAccountExist = new ConcreteAccountExist();
+            IHandlerEmployeeRegister checkCreateAccout = new ConcreteCreateAccount();
+
+            //Quy trình xử lý: Check các ô nhập >> Check tài khoản có tồn tại >> Tạo tài khoản được không
+            checkInput.SetNext(checkAccountExist).SetNext(checkCreateAccout);
+
+            (bool, string, PhraseType) result = checkInput.HandleRequest(info, role, ModelState);
+            switch (result.Item3)
             {
-                (bool, string) checkAccount = Validation.ExistAccount(database, info.CMND, info.HoTen);
-                if (checkAccount.Item1)
-                {
-                    (bool, string) checkRegister = Create.Employee(info, role);
-                    if (checkRegister.Item1)
-                    {
-                        TempData["msg"] = $"<script>alert('{checkRegister.Item2}');</script>";
-                        return RedirectToAction("Register", "HumanResource");
-                    }
-                    ModelState.AddModelError("TrungCMND", checkRegister.Item2);
-                }
-                ModelState.AddModelError("TrungCMND", checkAccount.Item2);
+                case PhraseType.CheckInput:
+                    Session["TempRole"] = role.MaChucVu;
+                    break;
+                case PhraseType.None:
+                    TempData["msg"] = $"<script>alert('{result.Item2}');</script>";
+                    return RedirectToAction("Register", "HumanResource");
             }
             return View();
         }
@@ -193,50 +197,7 @@ namespace QLMB.Controllers
         }
 
         //*-- Xử lý --*//
-        //Kiểm tra thông tin đăng ký - [Strategy Pattern]
-        private bool CheckEmployeeInfo(ThongTinND info, ChucVu role)
-        {
-            ModelStateDictionary modelState = this.ModelState;
-            ContextStrategy checkResult;
-            
-            //CMND
-            checkResult = new ContextStrategy(new ConcreteCMND(modelState, "CMND", info.CMND));
-            checkResult.GetResult();
-
-            //Ngày cấp
-            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
-            checkResult.GetResult();
-
-            //Họ tên
-            checkResult.strategy = new ConcreteName(modelState, "HoTen", info.HoTen);
-            checkResult.GetResult();
-
-            //Giới tính
-            checkResult.strategy = new ConcreteGender(modelState, "GioiTinh", info.GioiTinh);
-            checkResult.GetResult();
-
-            //Ngày sinh
-            checkResult.strategy = new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh,true);
-            checkResult.GetResult();
-
-            //Địa chỉ
-            checkResult.strategy = new ConcreteAddress(modelState, "DiaChi", info.DiaChi);
-            checkResult.GetResult();
-
-            //Chức vụ
-            checkResult.strategy = new ConcreteRole(modelState, "ChonChucVu", role.MaChucVu);
-            checkResult.GetResult();
-
-            if (checkResult.noError)
-            {
-                return true;
-            }
-
-            Session["TempRole"] = role.MaChucVu;
-            return false;
-        }
-
-        //Kiểm tra thông tin edit - [Strategy Pattern]
+        //Kiểm tra thông tin edit
         private bool CheckEditInfo(ThongTinND info, ChucVu role, string currentCMND)
         {
             NhanVien user = (NhanVien)Session["EmployeeInfo"];
