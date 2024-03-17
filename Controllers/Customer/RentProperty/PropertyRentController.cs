@@ -3,10 +3,10 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using QLMB.Models;
-
+using QLMB.Design_Pattern.TemplateMethod;
 namespace QLMB.Controllers
 {
-    public class PropertyRentController : Controller
+    public class PropertyRentController : PropertyControllerTemplate
     {
         private database db = new database();
         private readonly string ROLE = "MB";
@@ -16,18 +16,7 @@ namespace QLMB.Controllers
             1.  Users that have logged in
             2.  Users with a valid role
         */
-        public bool IsValidRole()
-        {
-            if (Session["EmployeeInfo"] == null)
-            {
-                return false;
-            }
-            //Đúng Role --> Vào
-            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == ROLE)
-                return true;
-
-            return false;
-        }
+    
         // GET: PropertyRent
         public ActionResult Index(string keyword)
         {
