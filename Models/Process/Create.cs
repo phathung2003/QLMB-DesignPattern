@@ -1,11 +1,13 @@
-﻿namespace QLMB.Models.Process
+﻿using System;
+
+namespace QLMB.Models.Process
 {
     public class Create
     {
         private static database database = new database();
         private static readonly string DefaultPassword = "123456";
         //Thêm dữ liệu
-        public static (bool,string) Employee(ThongTinND userInfo, ChucVu role)
+        public static (bool,string) Employee(database db, ThongTinND userInfo, ChucVu role)
         {
             try
             {
@@ -63,6 +65,11 @@
                 return (true, "Đăng ký thành công");
             }
             catch { return (false, "* Bạn đã có tài khoản ! Vui lòng đăng nhập"); }
+        }
+
+        internal static (bool, string) Employee(ThongTinND info, ChucVu role)
+        {
+            throw new NotImplementedException();
         }
     }
 }
