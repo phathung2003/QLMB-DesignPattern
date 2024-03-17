@@ -151,6 +151,7 @@
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\PhraseType.cs" />
     <Compile Include="Design_Pattern\Prototype\ConcretePrototype\ConcreteClonePost.cs" />
     <Compile Include="Design_Pattern\Prototype\Interface\IEventSalePost.cs" />
+    <Compile Include="Design_Pattern\Facade\EmployeeFacade.cs" />
     <Compile Include="Design_Pattern\Singleton\ChucVu_Singleton.cs" />
     <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteAddress.cs" />
     <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteBirthday.cs" />
