@@ -95,7 +95,7 @@ namespace QLMB.Controllers
 
 
         //Kiểm tra thông tin đăng nhập
-        //Người thuê
+        //Người thuê - [Strategy Pattern]
         private bool rentalCheckLogin(string username, string password)
         {
             ModelStateDictionary modelState = this.ModelState;
@@ -129,7 +129,7 @@ namespace QLMB.Controllers
             return false;
         }
 
-        //Nhân viên
+        //Nhân viên - [Strategy Pattern]
         private (bool, NhanVien) ManagerCheckLogin(string maNV, string password)
         {
             ModelStateDictionary modelState = this.ModelState;

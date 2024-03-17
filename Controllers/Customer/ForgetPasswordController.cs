@@ -17,7 +17,6 @@ namespace QLMB.Controllers
             return View();
         }
 
-
         //Xử lý lấy CMND
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -53,7 +52,7 @@ namespace QLMB.Controllers
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
-        //Check CMND người thuê
+        //Check CMND người thuê - [Strategy Pattern]
         private bool checkInfo(string CMND)
         {
             ModelStateDictionary modelState = this.ModelState;
@@ -110,7 +109,7 @@ namespace QLMB.Controllers
         }
 
 
-        //Check mật khẩu mới
+        //Check mật khẩu mới - [Strategy Pattern]
         private bool checkRePassword(NguoiThue nguoiThue, string rePass)
         {
             ModelStateDictionary modelState = this.ModelState;

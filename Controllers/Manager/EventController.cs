@@ -4,6 +4,9 @@ using System.Web.Mvc;
 using System.Collections.Generic;
 using QLMB.Models.Process;
 using QLMB.Design_Pattern.Prototype.ConcretePrototype;
+using QLMB.Design_Pattern.Adapter.Interface;
+using QLMB.Design_Pattern.Adapter.Adapter;
+using QLMB.Design_Pattern.Adapter.Adaptee;
 
 namespace QLMB.Controllers
 {
@@ -142,11 +145,16 @@ namespace QLMB.Controllers
         {
             if (btn == "Accept")
             {
+                //-- | [Prototype Pattern] | --//
                 ConcreteClonePost post = new ConcreteClonePost();
                 post.info = info;
                 ConcreteClonePost clonePost = (ConcreteClonePost)post.Clone();
 
-                int nextID = Shared.CreateIDSKUD(db, clonePost.info.MaDM);
+                //-- | [Adapter Pattern] | --//
+                IConvertPost convertClonePost = new AdapterEventSalePost(new AdapteeChangeFormat());
+                SuKienUuDai postConvert = convertClonePost.ConvertToSKUD(clonePost);
+
+                int nextID = Shared.CreateIDSKUD(db, postConvert.MaDM);
                 clonePost.info.MaDon = clonePost.info.MaDM + $"{nextID:0000}";
                 db.SuKienUuDais.Add(clonePost.info);
                 db.SaveChanges();
