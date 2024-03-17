@@ -6,12 +6,13 @@ using QLMB.Models;
 using System.Web.Mvc;
 namespace QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler
 {
-    public class ConcreteCheckInput : BaseEmployeeRegisterHandler
+    public class ConcreteCheckInput : BaseHandlerEmployeeRegister
     {
-        public override (bool, string) HandleRequest(ThongTinND info, ChucVu role, ModelStateDictionary modelState)
+        private ContextStrategy checkResult;
+        
+        //Kiểm tra thông tin đăng ký - [Strategy Pattern]
+        public override (bool, string, PhraseType) HandleRequest(ThongTinND info, ChucVu role, ModelStateDictionary modelState)
         {
-            ContextStrategy checkResult;
-
             //CMND
             checkResult = new ContextStrategy(new ConcreteCMND(modelState, "CMND", info.CMND));
             checkResult.GetResult();
@@ -44,8 +45,7 @@ namespace QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler
             {
                 return base.HandleRequest(info, role, modelState);
             }
-
-            return (false, role.MaChucVu);
+            return (false, role.MaChucVu, PhraseType.CheckInput);
         }
     }
 }

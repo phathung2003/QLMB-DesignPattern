@@ -2,22 +2,22 @@
 using QLMB.Models;
 using QLMB.Models.Process;
 using System.Web.Mvc;
-
 namespace QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler
 {
-    public class ConcreteCreateAccount : BaseEmployeeRegisterHandler
+    public class ConcreteCreateAccount : BaseHandlerEmployeeRegister
     {
-        private database database = new database();
-
-        public override (bool, string) HandleRequest(ThongTinND info, ChucVu role, ModelStateDictionary modelState)
+        private (bool, string) createAccount;
+        public override (bool, string, PhraseType) HandleRequest(ThongTinND info, ChucVu role, ModelStateDictionary modelState)
         {
-            (bool, string) checkRegister = Create.Employee(info, role);
-            if (checkRegister.Item1)
+            createAccount = Create.Employee(info, role);
+            if (createAccount.Item1)
             {
                 return base.HandleRequest(info, role, modelState);
             }
-            modelState.AddModelError("TrungCMND", checkRegister.Item2);
-            return (false, checkRegister.Item2);
+
+            //Xuất thông báo lỗi
+            modelState.AddModelError("TrungCMND", createAccount.Item2);
+            return (false, createAccount.Item2, PhraseType.CreateAccount);
         }
     }
 }
