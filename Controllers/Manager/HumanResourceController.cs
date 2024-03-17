@@ -9,11 +9,14 @@ using QLMB.Design_Pattern.Strategy.ConcreteFactory;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
+using QLMB.Design_Pattern.Facade;
+
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
     {
         private database database = new database();
+        private EmployeeFacade employeeFacade = new EmployeeFacade();
 
         //Trang chủ
         public ActionResult Main(string nameSearch)
@@ -143,6 +146,25 @@ namespace QLMB.Controllers
         //Xử lý thông tin đăng ký -- | [Chain Of Responsibility Pattern] | --
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //public ActionResult Register(ThongTinND info, ChucVu role)
+        //{
+        //    if (CheckEmployeeInfo(info, role))
+        //    {
+        //        (bool, string) checkAccount = Validation.ExistAccount(database, info.CMND, info.HoTen);
+        //        if (checkAccount.Item1)
+        //        {
+        //            (bool, string) checkRegister = Create.Employee(info, role);
+        //            if (checkRegister.Item1)
+        //            {
+        //                TempData["msg"] = $"<script>alert('{checkRegister.Item2}');</script>";
+        //                return RedirectToAction("Register", "HumanResource");
+        //            }
+        //            ModelState.AddModelError("TrungCMND", checkRegister.Item2);
+        //        }
+        //        ModelState.AddModelError("TrungCMND", checkAccount.Item2);
+        //    }
+        //    return View();
+        //}
         public ActionResult Register(ThongTinND info, ChucVu role)
         {
             IHandlerEmployeeRegister checkInput = new ConcreteCheckInput();
