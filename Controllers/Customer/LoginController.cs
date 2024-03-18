@@ -9,12 +9,11 @@ namespace QLMB.Controllers
 {
     public class LoginController : Controller
     {
-        private  database db = new database();
-        private  LoginCheckerFactory loginCheckerFactory;
+        private readonly LoginCheckerFactory loginCheckerFactory;
 
         public LoginController()
         {
-            loginCheckerFactory = new LoginCheckerFactory(db);
+            loginCheckerFactory = new LoginCheckerFactory(new database());
         }
 
         // Trang đăng nhập (Chung)
@@ -30,8 +29,8 @@ namespace QLMB.Controllers
         {
             try
             {
-                // Gọi Factory để lấy đúng loại LoginChecker dựa vào vai trò (role)
-                var loginChecker = loginCheckerFactory.GetLoginChecker("MB"); // Truyền vào role của Người thuê
+                // Gọi Factory để lấy đúng loại LoginChecker dựa vào độ dài của tài khoản đăng nhập
+                var loginChecker = loginCheckerFactory.GetLoginChecker(username);
 
                 // Kiểm tra đăng nhập
                 if (loginChecker.CheckLogin(username, password))
@@ -51,6 +50,7 @@ namespace QLMB.Controllers
         }
     }
 }
+
 
 /*
 Mã tình trạng
