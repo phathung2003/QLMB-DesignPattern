@@ -1,8 +1,4 @@
 ﻿using QLMB.Design_Pattern.Factory;
-using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
-using QLMB.Design_Pattern.Strategy.Context;
-using QLMB.Models;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace QLMB.Controllers
@@ -13,7 +9,7 @@ namespace QLMB.Controllers
 
         public LoginController()
         {
-            loginCheckerFactory = new LoginCheckerFactory(new database());
+            loginCheckerFactory = new LoginCheckerFactory();
         }
 
         // Trang đăng nhập (Chung)

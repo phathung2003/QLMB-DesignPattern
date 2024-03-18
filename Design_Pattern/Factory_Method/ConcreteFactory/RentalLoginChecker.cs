@@ -1,22 +1,16 @@
 ﻿using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
 namespace QLMB.Design_Pattern.Factory
 {
     public class RentalLoginChecker : ILoginChecker
     {
-        private readonly database db;
+        private readonly database db = new database();
 
-        public RentalLoginChecker(database db)
-        {
-            this.db = db;
-        }
+        public RentalLoginChecker() {}
 
         public bool CheckLogin(string username, string password)
         {
