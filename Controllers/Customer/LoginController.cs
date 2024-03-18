@@ -48,13 +48,7 @@ namespace QLMB.Controllers
         {
             try
             {
-                // Kiểm tra nếu tài khoản hoặc mật khẩu bị trống
-                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                {
-                    // Thêm thông báo lỗi vào ModelState
-                    ModelState.AddModelError("", "Vui lòng nhập tên đăng nhập và mật khẩu.");
-                    return View(); // Quay lại view đăng nhập với thông báo lỗi
-                }
+               
 
                 // Gọi Factory để lấy đúng loại LoginChecker dựa vào độ dài của tài khoản đăng nhập
                 var loginChecker = loginCheckerFactory.GetLoginChecker(username, password);
@@ -62,6 +56,7 @@ namespace QLMB.Controllers
                 // Kiểm tra đăng nhập
                 if (loginChecker.CheckLogin(username, password))
                 {
+                    (bool, string, NguoiThue) checkLogin = Validation.checkLoginRental(username, password);
                     // Kiểm tra loại tài khoản và chuyển hướng tương ứng
                     if (loginChecker is RentalLoginChecker)
                     {
@@ -71,9 +66,19 @@ namespace QLMB.Controllers
                     }
                     else if (loginChecker is ManagerLoginChecker)
                     {
-                        // Nếu là nhân viên, chuyển hướng về trang StaffLogin
-                        Session["EmployeeName"] = username; // Lưu thông tin nhân viên vào Session
-                        return RedirectToAction("StaffLogin", "Login");
+                        (bool, NhanVien) result = ManagerCheckLogin(username, password);
+                        if (result.Item1)
+                        {
+                            switch (result.Item2.MATT)
+                            {
+                                case 5:
+                                    return RedirectToAction("Banned", "Account");
+                                case 6:
+                                    return RedirectToAction("FirstLogin", "Account", new { MANV = result.Item2.MaNV });
+                                default:
+                                    return RedirectToAction("Manager", "Account");
+                            }
+                        }
                     }
                 }
 
@@ -88,40 +93,82 @@ namespace QLMB.Controllers
             }
         }
 
-
-        //POST đăng nhập (Nhân viên)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult StaffLogin(string username, string password)
+        //Người thuê - [Strategy Pattern]
+        private bool rentalCheckLogin(string username, string password)
         {
-            try
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
+
+            //Username
+            checkResult = new ContextStrategy(new ConcreteUsername(modelState, "inputUsername", username));
+            checkResult.GetResult();
+
+            //Password
+            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.GetResult();
+
+            if (checkResult.noError)
             {
-                (bool, NhanVien) result = ManagerCheckLogin(username, password);
-                if (result.Item1)
+                (bool, string, NguoiThue) checkLogin = Validation.checkLoginRental(username, password);
+
+                if (checkLogin.Item1)
                 {
-                    switch (result.Item2.MATT)
-                    {
-                        case 5:
-                            return RedirectToAction("Banned", "Account");
-                        case 6:
-                            return RedirectToAction("FirstLogin", "Account", new { MANV = result.Item2.MaNV });
-                        default:
-                            return RedirectToAction("Manager", "Account");
-                    }
+                    ThongTinND data = db.ThongTinNDs.Where(a => a.CMND == checkLogin.Item3.CMND).First();
+                    Session["AccountName"] = data.HoTen;
+                    Session["DX_TenDangNhap"] = username;
+
+                    return true;
                 }
-                return View("StaffLogin");
-
-            }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
+                ModelState.AddModelError("Error", checkLogin.Item2);
+                return false;
             }
 
+            //Thông tin sai
+            return false;
         }
-
-        private (bool, NhanVien) ManagerCheckLogin(string username, string password)
+        
+        //Nhân viên - [Strategy Pattern]
+        private (bool, NhanVien) ManagerCheckLogin(string maNV, string password)
         {
-            throw new NotImplementedException();
+            ModelStateDictionary modelState = this.ModelState;
+            ContextStrategy checkResult;
+
+            //Username
+            checkResult = new ContextStrategy(new ConcreteUsername(modelState, "inputUsername", maNV));
+            checkResult.GetResult();
+
+            //Password
+            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.GetResult();
+
+            if (checkResult.noError)
+            {
+                (bool, string, NhanVien) checkLogin = Validation.checkLoginEmployee(maNV, password);
+
+                //Thấy thông tin => Thông tin đúng
+                if (checkLogin.Item1)
+                {
+                    string[] name = checkLogin.Item3.ThongTinND.HoTen.Split(' ');
+
+                    //Xử lý độ dài tên: Độ dài lớn hơn 1 mới bị cắt 2 tên cuối
+                    if (name.Length == 1)
+                        Session["AccountName"] = name[0];
+                    else
+                        Session["AccountName"] = name[name.Length - 2] + " " + name[name.Length - 1];
+
+                    ThongTinND employeeInfo = db.ThongTinNDs.Where(s => s.CMND == checkLogin.Item3.CMND).FirstOrDefault();
+
+                    Session["EmployeeInfo"] = checkLogin.Item3;
+                    Session["UserInfo"] = employeeInfo;
+
+                    return (true, checkLogin.Item3);
+                }
+                else
+                    ModelState.AddModelError("Error", checkLogin.Item2);
+            }
+
+            //Thông tin sai
+            return (false, null);
         }
     }
 }
