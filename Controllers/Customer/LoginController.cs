@@ -3,20 +3,15 @@ using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
 using System.Linq;
+using QLMB.Design_Pattern.Factory;
 using System.Web.Mvc;
-
 namespace QLMB.Controllers
 {
     public class LoginController : Controller
     {
-        private  database db = new database();
-        private  LoginCheckerFactory loginCheckerFactory;
+        private  LoginCheckerFactory loginCheckerFactory = new LoginCheckerFactory();
 
-        public LoginController()
-        {
-            loginCheckerFactory = new LoginCheckerFactory(db);
-        }
-
+        // Trang đăng nhập (Chung)
         // Trang đăng nhập (Chung)
         public ActionResult Login()
         {
