@@ -11,24 +11,17 @@ namespace QLMB.Design_Pattern.Factory
 {
     public class RentalLoginChecker : ILoginChecker
     {
-        private database db;
-        private ModelStateDictionary modelState;
-        private Controller controller;
+        private readonly database db;
 
         public RentalLoginChecker(database db)
         {
             this.db = db;
         }
 
-        public RentalLoginChecker(database dbContext, ModelStateDictionary modelState, Controller controller)
-        {
-            db = dbContext;
-            this.modelState = modelState;
-            this.controller = controller;
-        }
-
         public bool CheckLogin(string username, string password)
         {
+            ModelStateDictionary modelState = new ModelStateDictionary();
+
             ContextStrategy checkResult;
 
             //Username
@@ -47,9 +40,8 @@ namespace QLMB.Design_Pattern.Factory
                 {
                     ThongTinND data = db.ThongTinNDs.Where(a => a.CMND == checkLogin.Item3.CMND).First();
 
-                    // Sử dụng Session thông qua Controller
-                    controller.Session["AccountName"] = data.HoTen;
-                    controller.Session["DX_TenDangNhap"] = username;
+                    HttpContext.Current.Session["AccountName"] = data.HoTen;
+                    HttpContext.Current.Session["DX_TenDangNhap"] = username;
 
                     return true;
                 }

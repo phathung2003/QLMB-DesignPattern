@@ -11,24 +11,17 @@ namespace QLMB.Design_Pattern.Factory
 {
     public class ManagerLoginChecker : ILoginChecker
     {
-        private database db;
-        private ModelStateDictionary modelState;
-        private Controller controller;
+        private readonly database db;
 
         public ManagerLoginChecker(database db)
         {
             this.db = db;
         }
 
-        public ManagerLoginChecker(database dbContext, ModelStateDictionary modelState, Controller controller)
-        {
-            db = dbContext;
-            this.modelState = modelState;
-            this.controller = controller;
-        }
-
         public bool CheckLogin(string username, string password)
         {
+            ModelStateDictionary modelState = new ModelStateDictionary();
+
             ContextStrategy checkResult;
 
             //Username
@@ -50,14 +43,14 @@ namespace QLMB.Design_Pattern.Factory
 
                     //Xử lý độ dài tên: Độ dài lớn hơn 1 mới bị cắt 2 tên cuối
                     if (name.Length == 1)
-                        controller.Session["AccountName"] = name[0];
+                        HttpContext.Current.Session["AccountName"] = name[0];
                     else
-                        controller.Session["AccountName"] = name[name.Length - 2] + " " + name[name.Length - 1];
+                        HttpContext.Current.Session["AccountName"] = name[name.Length - 2] + " " + name[name.Length - 1];
 
                     ThongTinND employeeInfo = db.ThongTinNDs.Where(s => s.CMND == checkLogin.Item3.CMND).FirstOrDefault();
 
-                    controller.Session["EmployeeInfo"] = checkLogin.Item3;
-                    controller.Session["UserInfo"] = employeeInfo;
+                    HttpContext.Current.Session["EmployeeInfo"] = checkLogin.Item3;
+                    HttpContext.Current.Session["UserInfo"] = employeeInfo;
 
                     return true;
                 }
