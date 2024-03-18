@@ -1,21 +1,10 @@
 ﻿using QLMB.Design_Pattern.Factory;
-using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
-using QLMB.Design_Pattern.Strategy.Context;
-using QLMB.Models;
-using System.Linq;
 using System.Web.Mvc;
-
 namespace QLMB.Controllers
 {
     public class LoginController : Controller
     {
-        private  database db = new database();
-        private  LoginCheckerFactory loginCheckerFactory;
-
-        public LoginController()
-        {
-            loginCheckerFactory = new LoginCheckerFactory(db);
-        }
+        private  LoginCheckerFactory loginCheckerFactory = new LoginCheckerFactory();
 
         // Trang đăng nhập (Chung)
         public ActionResult Login()

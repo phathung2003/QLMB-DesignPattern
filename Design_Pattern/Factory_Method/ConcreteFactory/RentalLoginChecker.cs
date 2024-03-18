@@ -1,32 +1,25 @@
 ﻿using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-
 namespace QLMB.Design_Pattern.Factory
 {
     public class RentalLoginChecker : ILoginChecker
     {
-        private database db;
+        private database db = new database();
         private ModelStateDictionary modelState;
         private Controller controller;
 
-        public RentalLoginChecker(database db)
-        {
-            this.db = db;
-        }
+        public RentalLoginChecker() {}
 
-        public RentalLoginChecker(database dbContext, ModelStateDictionary modelState, Controller controller)
+        public RentalLoginChecker(ModelStateDictionary modelState, Controller controller)
         {
-            db = dbContext;
             this.modelState = modelState;
             this.controller = controller;
         }
 
+        //Xử lý đăng nhập người thuê - [Strategy Pattern]
         public bool CheckLogin(string username, string password)
         {
             ContextStrategy checkResult;
@@ -53,7 +46,6 @@ namespace QLMB.Design_Pattern.Factory
 
                     return true;
                 }
-
                 modelState.AddModelError("Error", checkLogin.Item2);
                 return false;
             }
