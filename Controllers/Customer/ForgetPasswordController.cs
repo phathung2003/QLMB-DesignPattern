@@ -120,7 +120,7 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Nhập lại mật khẩu
-            checkResult.strategy = new ConcreteRePassword(modelState, "reResetPassword", nguoiThue.MatKhau, rePass);
+            checkResult.SetStrategy(new ConcreteRePassword(modelState, "reResetPassword", nguoiThue.MatKhau, rePass));
             checkResult.GetResult();
 
             return checkResult.noError;

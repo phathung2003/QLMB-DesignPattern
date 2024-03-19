@@ -18,27 +18,27 @@ namespace QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler
             checkResult.GetResult();
 
             //Ngày cấp
-            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
+            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap));
             checkResult.GetResult();
 
             //Họ tên
-            checkResult.strategy = new ConcreteName(modelState, "HoTen", info.HoTen);
+            checkResult.SetStrategy(new ConcreteName(modelState, "HoTen", info.HoTen));
             checkResult.GetResult();
 
             //Giới tính
-            checkResult.strategy = new ConcreteGender(modelState, "GioiTinh", info.GioiTinh);
+            checkResult.SetStrategy(new ConcreteGender(modelState, "GioiTinh", info.GioiTinh));
             checkResult.GetResult();
 
             //Ngày sinh
-            checkResult.strategy = new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh, true);
+            checkResult.SetStrategy(new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh, true));
             checkResult.GetResult();
 
             //Địa chỉ
-            checkResult.strategy = new ConcreteAddress(modelState, "DiaChi", info.DiaChi);
+            checkResult.SetStrategy(new ConcreteAddress(modelState, "DiaChi", info.DiaChi));
             checkResult.GetResult();
 
             //Chức vụ
-            checkResult.strategy = new ConcreteRole(modelState, "ChonChucVu", role.MaChucVu);
+            checkResult.SetStrategy(new ConcreteRole(modelState, "ChonChucVu", role.MaChucVu));
             checkResult.GetResult();
 
             if (checkResult.noError)

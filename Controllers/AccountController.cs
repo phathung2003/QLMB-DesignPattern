@@ -208,7 +208,7 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Nhập lại mật khẩu
-            checkResult.strategy = new ConcreteRePassword(modelState, "reEmployeePass", info.MatKhau, rePass);
+            checkResult.SetStrategy(new ConcreteRePassword(modelState, "reEmployeePass", info.MatKhau, rePass));
             checkResult.GetResult();
 
             return checkResult.noError;
@@ -225,11 +225,11 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Ngày cấp
-            checkResult.strategy = new ConcreteIssuanceDate(modelState, "generalNgayCap", info.NgayCap);
+            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "generalNgayCap", info.NgayCap));
             checkResult.GetResult();
 
             //Địa chỉ
-            checkResult.strategy = new ConcreteAddress(modelState, "generalAddress", info.DiaChi);
+            checkResult.SetStrategy(new ConcreteAddress(modelState, "generalAddress", info.DiaChi));
             checkResult.GetResult();
 
             return checkResult.noError;
@@ -246,11 +246,11 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Nhập mật khẩu mới
-            checkResult.strategy = new ConcretePassword(modelState, "changePassword", info.MatKhau);
+            checkResult.SetStrategy(new ConcretePassword(modelState, "changePassword", info.MatKhau));
             checkResult.GetResult();
 
             //Nhập lại mật khẩu mới
-            checkResult.strategy = new ConcreteRePassword(modelState, "changeRePassword", info.MatKhau, rePass);
+            checkResult.SetStrategy(new ConcreteRePassword(modelState, "changeRePassword", info.MatKhau, rePass));
             checkResult.GetResult();
 
             return checkResult.noError;

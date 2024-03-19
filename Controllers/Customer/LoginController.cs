@@ -106,7 +106,7 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Password
-            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.SetStrategy(new ConcretePassword(modelState, "inputPassword", password));
             checkResult.GetResult();
 
             if (checkResult.noError)
@@ -140,7 +140,7 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Password
-            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.SetStrategy(new ConcretePassword(modelState, "inputPassword", password));
             checkResult.GetResult();
 
             if (checkResult.noError)
