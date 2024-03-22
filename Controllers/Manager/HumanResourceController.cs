@@ -6,10 +6,10 @@ using QLMB.Design_Pattern.Singleton;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.ConcreteFactory;
+using QLMB.Design_Pattern.Facade;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
-using QLMB.Design_Pattern.Facade;
 
 namespace QLMB.Controllers
 {
