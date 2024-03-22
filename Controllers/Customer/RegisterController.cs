@@ -60,35 +60,35 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Ngày cấp
-            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
+            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap)   );
             checkResult.GetResult();
 
             //Họ tên
-            checkResult.strategy = new ConcreteName(modelState, "HoTen", info.HoTen);
+            checkResult.SetStrategy(new ConcreteName(modelState, "HoTen", info.HoTen));
             checkResult.GetResult();
 
             //Giới tính
-            checkResult.strategy = new ConcreteGender(modelState, "GioiTinh", info.GioiTinh);
+            checkResult.SetStrategy(new ConcreteGender(modelState, "GioiTinh", info.GioiTinh));
             checkResult.GetResult();
 
             //Ngày sinh
-            checkResult.strategy = new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh, true);
+            checkResult.SetStrategy(new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh, true));
             checkResult.GetResult();
 
             //Địa chỉ
-            checkResult.strategy = new ConcreteAddress(modelState, "DiaChi", info.DiaChi);
+            checkResult.SetStrategy(new ConcreteAddress(modelState, "DiaChi", info.DiaChi));
             checkResult.GetResult();
 
             //Tên đăng nhập
-            checkResult.strategy = new ConcreteUsername(modelState, "TenDangNhap", username, true);
+            checkResult.SetStrategy(new ConcreteUsername(modelState, "TenDangNhap", username, true));
             checkResult.GetResult();
 
             //Mật khẩu
-            checkResult.strategy = new ConcretePassword(modelState, "MatKhau", password);
+            checkResult.SetStrategy(new ConcretePassword(modelState, "MatKhau", password));
             checkResult.GetResult();
 
             //Nhập lại mật khẩu
-            checkResult.strategy = new ConcreteRePassword(modelState, "MatKhauLai", password, rePassword);
+            checkResult.SetStrategy(new ConcreteRePassword(modelState, "MatKhauLai", password, rePassword));
             checkResult.GetResult();
 
             return checkResult.noError;

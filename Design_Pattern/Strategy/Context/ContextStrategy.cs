@@ -5,9 +5,14 @@ namespace QLMB.Design_Pattern.Strategy.Context
     {
         public bool noError {  get; private set; } = true;
 
-        public IValidation strategy {  get; set; }
+        private IValidation strategy;
 
         public ContextStrategy(IValidation strategy)
+        {
+            this.strategy = strategy;
+        }
+
+        public void SetStrategy(IValidation strategy)
         {
             this.strategy = strategy;
         }

@@ -210,7 +210,7 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Ngày sinh
-            checkResult.strategy = new ConcreteBirthday(modelState, "editNgaySinh", info.NgaySinh, true);
+            checkResult.SetStrategy(new ConcreteBirthday(modelState, "editNgaySinh", info.NgaySinh, true));
             checkResult.GetResult();
 
             //CMND
@@ -218,15 +218,15 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Ngày cấp
-            checkResult.strategy = new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap);
+            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap)   );
             checkResult.GetResult();
 
             //Địa chỉ
-            checkResult.strategy = new ConcreteAddress(modelState, "editAddress", info.DiaChi);
+            checkResult.SetStrategy(new ConcreteAddress(modelState, "editAddress", info.DiaChi));
             checkResult.GetResult();
 
             //Chức vụ
-            checkResult.strategy = new ConcreteRole(modelState, "editRole", user.MaChucVu, role.MaChucVu);
+            checkResult.SetStrategy(new ConcreteRole(modelState, "editRole", user.MaChucVu, role.MaChucVu));
             checkResult.GetResult();
 
             if (checkResult.noError)
