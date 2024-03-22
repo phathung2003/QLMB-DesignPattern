@@ -48,7 +48,16 @@ namespace QLMB.Controllers
         {
             try
             {
-               
+                ModelStateDictionary modelState = this.ModelState;
+                ContextStrategy checkResult;
+
+                //Username
+                checkResult = new ContextStrategy(new ConcreteUsername(modelState, "inputUsername", username));
+                checkResult.GetResult();
+
+                //Password
+                checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+                checkResult.GetResult();
 
                 // Gọi Factory để lấy đúng loại LoginChecker dựa vào độ dài của tài khoản đăng nhập
                 var loginChecker = loginCheckerFactory.GetLoginChecker(username, password);
