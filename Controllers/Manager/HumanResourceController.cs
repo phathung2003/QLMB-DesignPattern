@@ -9,7 +9,6 @@ using QLMB.Design_Pattern.Strategy.ConcreteFactory;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
-
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
@@ -47,7 +46,6 @@ namespace QLMB.Controllers
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
-        
         //Trang chi tiết
         public ActionResult Detail(string CMND)
         {
@@ -142,7 +140,7 @@ namespace QLMB.Controllers
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
-        //Xử lý thông tin đăng ký - [Chain Of Responsibility Pattern]
+        //Xử lý thông tin đăng ký -- | [Chain Of Responsibility Pattern] | --
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Register(ThongTinND info, ChucVu role)
@@ -168,7 +166,7 @@ namespace QLMB.Controllers
         }
 
 
-        //Chọn Chức vụ - [Singleton Pattern]
+        //Chọn Chức vụ -- | [Singleton Pattern] | --
         public ActionResult SelectRole(string CMND)
         {
             if (CheckRole() && Session["Page"] != null)
@@ -197,7 +195,7 @@ namespace QLMB.Controllers
         }
 
         //*-- Xử lý --*//
-        //Kiểm tra thông tin edit
+        //Kiểm tra thông tin edit -- | [Strategy Pattern] | --
         private bool CheckEditInfo(ThongTinND info, ChucVu role, string currentCMND)
         {
             NhanVien user = (NhanVien)Session["EmployeeInfo"];

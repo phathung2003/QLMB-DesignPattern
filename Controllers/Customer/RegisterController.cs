@@ -4,7 +4,6 @@ using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
 using QLMB.Models.Process;
 using System.Web.Mvc;
-
 namespace QLMB.Controllers
 {
     public class RegisterController : Controller

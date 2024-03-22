@@ -4,7 +4,6 @@ using QLMB.Models.Process;
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Design_Pattern.Strategy.ConcreteFactory;
-
 namespace QLMB.Controllers
 {
     public class ForgetPasswordController : Controller
