@@ -2,27 +2,18 @@
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
 namespace QLMB.Design_Pattern.Factory
 {
-    public class RentalLoginChecker : ILoginChecker
+    public class ConcreteRentalLoginChecker : ILoginChecker
     {
-        private readonly database db;
+        private readonly database db = new database();
 
-        public RentalLoginChecker(database db)
+        //Người thuê -- | [Strategy Pattern] | --
+        public bool CheckLogin(string username, string password, ModelStateDictionary modelState)
         {
-            this.db = db;
-        }
-
-        public bool CheckLogin(string username, string password)
-        {
-            ModelStateDictionary modelState = new ModelStateDictionary();
-
             ContextStrategy checkResult;
 
             //Username
@@ -30,7 +21,7 @@ namespace QLMB.Design_Pattern.Factory
             checkResult.GetResult();
 
             //Password
-            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.SetStrategy(new ConcretePassword(modelState, "inputPassword", password));
             checkResult.GetResult();
 
             if (checkResult.noError)

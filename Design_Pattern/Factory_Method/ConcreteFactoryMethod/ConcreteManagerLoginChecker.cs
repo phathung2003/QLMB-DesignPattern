@@ -2,27 +2,18 @@
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
 namespace QLMB.Design_Pattern.Factory
 {
-    public class ManagerLoginChecker : ILoginChecker
+    public class ConcreteManagerLoginChecker : ILoginChecker
     {
-        private readonly database db;
+        private readonly database db = new database();
 
-        public ManagerLoginChecker(database db)
+        //Nhân viên -- | [Strategy Pattern] | --
+        public bool CheckLogin(string username, string password, ModelStateDictionary modelState)
         {
-            this.db = db;
-        }
-
-        public bool CheckLogin(string username, string password)
-        {
-            ModelStateDictionary modelState = new ModelStateDictionary();
-
             ContextStrategy checkResult;
 
             //Username
@@ -30,13 +21,12 @@ namespace QLMB.Design_Pattern.Factory
             checkResult.GetResult();
 
             //Password
-            checkResult.strategy = new ConcretePassword(modelState, "inputPassword", password);
+            checkResult.SetStrategy(new ConcretePassword(modelState, "inputPassword", password));
             checkResult.GetResult();
 
             if (checkResult.noError)
             {
                 (bool, string, NhanVien) checkLogin = Validation.checkLoginEmployee(username, password);
-
                 //Thấy thông tin => Thông tin đúng
                 if (checkLogin.Item1)
                 {
@@ -61,7 +51,6 @@ namespace QLMB.Design_Pattern.Factory
                     return false;
                 }
             }
-
             //Thông tin sai
             return false;
         }
