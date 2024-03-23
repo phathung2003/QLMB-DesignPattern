@@ -7,27 +7,36 @@ using QLMB.Design_Pattern.Adapter.Interface;
 using QLMB.Design_Pattern.Adapter.Adapter;
 using QLMB.Design_Pattern.Adapter.Adaptee;
 using QLMB.Design_Pattern.Facade;
+
 using System.Web;
+using System;
+
 namespace QLMB.Controllers
 {
-    public class EventController : Controller
+    public class EventController : ControllerTemplate
     {
         private database database = new database();
 
         // GET: Event -- | [Facade Pattern] | --
         public ActionResult EventMain(string nameSearch)
         {
-            HttpSessionStateBase session = this.Session;
-            FacadeMainPage page = new FacadeMainPage(session);
-            return page.MainPage(nameSearch, RoleType.SK);
+            return ExecuteAction(() =>
+            {
+                HttpSessionStateBase session = this.Session;
+                FacadeMainPage page = new FacadeMainPage(session);
+                return page.MainPage(nameSearch, RoleType.SK);
+            });
         }
 
         // GET: Sale -- | [Facade Pattern] | --
         public ActionResult SaleMain(string nameSearch)
         {
-            HttpSessionStateBase session = this.Session;
-            FacadeMainPage page = new FacadeMainPage(session);
-            return page.MainPage(nameSearch, RoleType.UD);
+            return ExecuteAction(() =>
+            {
+                HttpSessionStateBase session = this.Session;
+                FacadeMainPage page = new FacadeMainPage(session);
+                return page.MainPage(nameSearch, RoleType.UD);
+            });
         }
 
         public ActionResult Detail(string maDon)
@@ -132,7 +141,7 @@ namespace QLMB.Controllers
         }
 
         //Kiểm tra hợp lệ
-        private bool checkRole()
+        protected override bool checkRole()
         {
             //Nếu EmployeeInfo == null --> Chưa đăng nhập
             if (Session["EmployeeInfo"] == null) { return false; }
@@ -141,6 +150,10 @@ namespace QLMB.Controllers
             if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "SKUD") { return true; }
 
             return false;
+        }
+        protected override ActionResult HandleException(Exception ex)
+        {
+            return RedirectToAction("Index", "SkillIssue");
         }
         public ActionResult returnLocal()
         {
