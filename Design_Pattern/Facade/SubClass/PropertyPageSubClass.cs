@@ -6,11 +6,11 @@ using System.Web.Mvc;
 using System.Data.Entity;
 namespace QLMB.Design_Pattern.Facade.SubClass
 {
-    public class Property : Controller
+    public class PropertyPageSubClass : Controller
     {
         private database db = new database();
         private HttpSessionStateBase session;
-        public Property(HttpSessionStateBase session) { this.session = session; }
+        public PropertyPageSubClass(HttpSessionStateBase session) { this.session = session; }
         public ActionResult MainPage(string nameSearch)
         {
             IQueryable<MatBang> matBangs = db.MatBangs.Include(a => a.TinhTrang);

@@ -7,12 +7,11 @@ using System.Web;
 using System.Web.Mvc;
 namespace QLMB.Design_Pattern.Facade.SubClass
 {
-    public class HumanResoucreSubClass: Controller
+    public class HumanResoucrePageSubClass: Controller
     {
         private database database = new database();
         private HttpSessionStateBase session;
-        public HumanResoucreSubClass(HttpSessionStateBase session) { this.session = session; }
-
+        public HumanResoucrePageSubClass(HttpSessionStateBase session) { this.session = session; }
         public ActionResult MainPage(string nameSearch)
         {
             List<NhanVien> data = database.NhanViens.ToList();

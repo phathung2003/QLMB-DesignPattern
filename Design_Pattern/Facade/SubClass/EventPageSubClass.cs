@@ -10,7 +10,6 @@ namespace QLMB.Design_Pattern.Facade.SubClass
         private database database = new database();
         private HttpSessionStateBase session;
         public EventPageSubClass(HttpSessionStateBase session) { this.session = session; }
-
         public ActionResult MainPage(string nameSearch) 
         {
             List<SuKienUuDai> data = Shared.listSKUD(database, nameSearch, "SK");

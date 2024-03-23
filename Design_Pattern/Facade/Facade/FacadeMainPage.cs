@@ -8,19 +8,18 @@ namespace QLMB.Design_Pattern.Facade
     {
         private EventPageSubClass eventPage;
         private SalePageSubClass salePage;
-        private HumanResoucreSubClass humanResoucrePage;
-        private Property propertyPage;
+        private HumanResoucrePageSubClass humanResoucrePage;
+        private PropertyPageSubClass propertyPage;
         private HttpSessionStateBase session;
 
         public FacadeMainPage(HttpSessionStateBase session)
         {
             eventPage = new EventPageSubClass(session);
             salePage = new SalePageSubClass(session);
-            humanResoucrePage = new HumanResoucreSubClass(session);
-            propertyPage = new Property(session);
+            humanResoucrePage = new HumanResoucrePageSubClass(session);
+            propertyPage = new PropertyPageSubClass(session);
             this.session = session;
         }
-
         public ActionResult MainPage(string nameSearch, RoleType role)
         {
             try
@@ -60,7 +59,6 @@ namespace QLMB.Design_Pattern.Facade
 
             return false;
         }
-
         private string RoleDecode(RoleType role)
         {
             switch (role)
