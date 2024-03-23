@@ -11,18 +11,23 @@ using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
 using QLMB.Design_Pattern.Facade;
 using System.Web;
+using System;
+
 namespace QLMB.Controllers
 {
-    public class HumanResourceController : Controller
+    public class HumanResourceController : ControllerTemplate
     {
         private database database = new database();
 
         //Trang chủ -- | [Facade Pattern] | --
         public ActionResult Main(string nameSearch)
         {
-            HttpSessionStateBase session = this.Session;
-            FacadeMainPage page = new FacadeMainPage(session);
-            return page.MainPage(nameSearch,RoleType.NS);
+            return ExecuteAction(() =>
+            {
+                HttpSessionStateBase session = this.Session;
+                FacadeMainPage page = new FacadeMainPage(session);
+                return page.MainPage(nameSearch, RoleType.NS);
+            });
         }
 
         //Trang chi tiết
@@ -31,7 +36,7 @@ namespace QLMB.Controllers
             try
             {
                 //Kiểm tra hợp lệ
-                if (CheckRole())
+                if (checkRole())
                 {
                     if (Session["Page"] == null)
                         return RedirectToAction("Main");
@@ -105,7 +110,7 @@ namespace QLMB.Controllers
             try
             {
                 //Kiểm tra hợp lệ
-                if (CheckRole())
+                if (checkRole())
                 {
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EmployeeRegister";
@@ -148,7 +153,7 @@ namespace QLMB.Controllers
         //Chọn Chức vụ -- | [Singleton Pattern] | --
         public ActionResult SelectRole(string CMND)
         {
-            if (CheckRole() && Session["Page"] != null)
+            if (checkRole() && Session["Page"] != null)
             {
                 ChucVu role = new ChucVu();
                 //Đã xảy ra lỗi
@@ -216,7 +221,7 @@ namespace QLMB.Controllers
         }
 
         //Kiểm tra hợp lệ
-        private bool CheckRole()
+        protected override bool checkRole()
         {
             //Nếu EmployeeInfo == null --> Chưa đăng nhập
             if (Session["EmployeeInfo"] == null)
@@ -226,6 +231,10 @@ namespace QLMB.Controllers
             if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "NS")
                 return true;
             return false;
+        }
+        protected override ActionResult HandleException(Exception ex)
+        {
+            return RedirectToAction("Index", "SkillIssue");
         }
     }
 }

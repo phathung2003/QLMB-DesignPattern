@@ -6,9 +6,11 @@ using System.IO;
 using System.Linq;
 using QLMB.Design_Pattern.Facade;
 using System.Web;
+using System;
+
 namespace QLMB.Controllers
 {
-    public class PropertyController : Controller
+    public class PropertyController : ControllerTemplate
     {
         // Database & Constant configurations
         private database db = new database();
@@ -19,7 +21,7 @@ namespace QLMB.Controllers
             1.  Users that have logged in
             2.  Users with a valid role
         */
-        public bool IsValidRole()
+        protected override bool checkRole()
         {
             if (Session["EmployeeInfo"] == null)
             {
@@ -31,20 +33,26 @@ namespace QLMB.Controllers
 
             return false;
         }
-
+        protected override ActionResult HandleException(Exception ex)
+        {
+            return RedirectToAction("Index", "SkillIssue");
+        }
         // GET: Property -- | [Facade Pattern] | --
         [HttpGet]
         public ActionResult Index(string keyword)
         {
-            HttpSessionStateBase session = this.Session;
-            FacadeMainPage page = new FacadeMainPage(session);
-            return page.MainPage(keyword, RoleType.MB);
+            return ExecuteAction(() =>
+            {
+                HttpSessionStateBase session = this.Session;
+                FacadeMainPage page = new FacadeMainPage(session);
+                return page.MainPage(keyword, RoleType.MB);
+            });
         }
         public ActionResult Create()
         {
             try
             {
-                if (IsValidRole())
+                if (checkRole())
                 {
                     List<TinhTrang> dsTinhTrang = db.TinhTrangs.Where(k => k.MATT >= 7).ToList();
                     ViewBag.MATT = new SelectList(dsTinhTrang, "MaTT", "TenTT");
@@ -63,7 +71,7 @@ namespace QLMB.Controllers
         {
             try
             {
-                if (IsValidRole())
+                if (checkRole())
                 {
                     if (id == null)
                     {
@@ -89,7 +97,7 @@ namespace QLMB.Controllers
         {
             try
             {
-                if (IsValidRole())
+                if (checkRole())
                 {
                     if (id == null)
                     {
