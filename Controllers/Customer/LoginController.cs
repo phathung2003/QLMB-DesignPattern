@@ -6,18 +6,12 @@ namespace QLMB.Controllers
 {
     public class LoginController : Controller
     {
-        private database db = new database();
 
         // Trang đăng nhập (Chung)
-        public ActionResult Login()
-        {
-            return View();
-        }
+        public ActionResult Login() { return View(); }
+        
         //Trang đăng nhập (Nhân viên)
-        public ActionResult StaffLogin()
-        {
-            return View();
-        }
+        public ActionResult StaffLogin() { return View(); }
 
         //Đăng xuất
         public ActionResult Logout()
@@ -99,11 +93,7 @@ namespace QLMB.Controllers
         }
 
         //Lấy thông tin nhân viên
-        private NhanVien ManagerInfo(string maNV, string password)
-        {
-            (bool, string, NhanVien) checkLogin = Validation.checkLoginEmployee(maNV, password);      
-            return checkLogin.Item3;
-        }
+        private NhanVien ManagerInfo(string maNV, string password) => Validation.checkLoginEmployee(maNV, password).Item3;
     }
 }
 

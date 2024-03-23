@@ -13,10 +13,7 @@ namespace QLMB.Controllers
 
         //----------- Người thuê -----------//
         //Trang đăng ký
-        public ActionResult rentalInfo()
-        {
-            return View();
-        }
+        public ActionResult rentalInfo() { return View(); }
 
 
         //Xử lý thông tin
@@ -48,7 +45,7 @@ namespace QLMB.Controllers
             return View();
         }
 
-        //Kiểm tra thông tin - [Strategy Pattern]
+        //Kiểm tra thông tin - -- | [Strategy Pattern] | --
         private bool checkInfo(ThongTinND thongTin, string username, string password, string rePassword)
         {
             ModelStateDictionary modelState = this.ModelState;

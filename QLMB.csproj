@@ -140,7 +140,6 @@
     <Compile Include="Controllers\Manager\PropertyController.cs" />
     <Compile Include="Controllers\Payment\PaymentController.cs" />
     <Compile Include="Controllers\SkillIssueController.cs" />
-    <Compile Include="Design_Pattern\Facade\EmployeeFacade.cs" />
     <Compile Include="Design_Pattern\Adapter\Adaptee\AdapteeChangeFormat.cs" />
     <Compile Include="Design_Pattern\Adapter\Adapter\AdapterEventSalePost.cs" />
     <Compile Include="Design_Pattern\Adapter\Interface\IConvertPost.cs" />
@@ -150,6 +149,12 @@
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\ConcreteHandler\ConcreteCreateAccount.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\Interface\IHandlerEmployeeRegister.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\PhraseType.cs" />
+    <Compile Include="Design_Pattern\Facade\Facade\FacadeMainPage.cs" />
+    <Compile Include="Design_Pattern\Facade\RoleType.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\EventPageSubClass.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\HumanResoucreSubClass.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\Property.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\SalePageSubClass.cs" />
     <Compile Include="Design_Pattern\Factory_Method\ConcreteCreator\ConcreteCreatorManager.cs" />
     <Compile Include="Design_Pattern\Factory_Method\ConcreteCreator\ConcreteCreatorRentail.cs" />
     <Compile Include="Design_Pattern\Factory_Method\Interface\ILoginChecker.cs" />
@@ -158,7 +163,6 @@
     <Compile Include="Design_Pattern\Factory_Method\ConcreteFactoryMethod\ConcreteRentalLoginChecker.cs" />
     <Compile Include="Design_Pattern\Prototype\ConcretePrototype\ConcreteClonePost.cs" />
     <Compile Include="Design_Pattern\Prototype\Interface\IEventSalePost.cs" />
-    <Compile Include="Design_Pattern\Facade\EmployeeFacade.cs" />
     <Compile Include="Design_Pattern\Singleton\ChucVu_Singleton.cs" />
     <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteAddress.cs" />
     <Compile Include="Design_Pattern\Strategy\ConcreteFactory\ConcreteBirthday.cs" />

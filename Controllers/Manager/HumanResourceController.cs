@@ -6,48 +6,23 @@ using QLMB.Design_Pattern.Singleton;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.ConcreteFactory;
-using QLMB.Design_Pattern.Facade;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
 using QLMB.Design_Pattern.Facade;
-
+using System.Web;
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
     {
         private database database = new database();
-        private EmployeeFacade employeeFacade = new EmployeeFacade();
 
-        //Trang chủ
+        //Trang chủ -- | [Facade Pattern] | --
         public ActionResult Main(string nameSearch)
         {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (CheckRole())
-                {
-                    var data = database.NhanViens.ToList();
-
-                    //Xử lý tìm kiếm
-                    if (nameSearch != null)
-                    {
-                        data = data.Where(s => s.MaNV.ToString().Contains(nameSearch) ||
-                                               s.ChucVu.TenCV.ToUpper().Contains(nameSearch) ||
-                                               s.CMND.Trim().Contains(nameSearch) ||
-                                               s.ThongTinND.HoTen.ToUpper().Contains(nameSearch.ToUpper()) ||
-                                               s.TinhTrang.TenTT.ToUpper().Contains(nameSearch.ToUpper())).ToList();
-                    }
-
-                    //Dùng để xử lý về lại trang trước đó
-                    Session["Page"] = "EmployeeMain";
-                    return View(data);
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch,RoleType.NS);
         }
 
         //Trang chi tiết
@@ -147,25 +122,6 @@ namespace QLMB.Controllers
         //Xử lý thông tin đăng ký -- | [Chain Of Responsibility Pattern] | --
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public ActionResult Register(ThongTinND info, ChucVu role)
-        //{
-        //    if (CheckEmployeeInfo(info, role))
-        //    {
-        //        (bool, string) checkAccount = Validation.ExistAccount(database, info.CMND, info.HoTen);
-        //        if (checkAccount.Item1)
-        //        {
-        //            (bool, string) checkRegister = Create.Employee(info, role);
-        //            if (checkRegister.Item1)
-        //            {
-        //                TempData["msg"] = $"<script>alert('{checkRegister.Item2}');</script>";
-        //                return RedirectToAction("Register", "HumanResource");
-        //            }
-        //            ModelState.AddModelError("TrungCMND", checkRegister.Item2);
-        //        }
-        //        ModelState.AddModelError("TrungCMND", checkAccount.Item2);
-        //    }
-        //    return View();
-        //}
         public ActionResult Register(ThongTinND info, ChucVu role)
         {
             IHandlerEmployeeRegister checkInput = new ConcreteCheckInput();
