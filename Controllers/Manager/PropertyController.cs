@@ -2,10 +2,10 @@
 using System.Web.Mvc;
 using QLMB.Models;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
-
+using QLMB.Design_Pattern.Facade;
+using System.Web;
 namespace QLMB.Controllers
 {
     public class PropertyController : Controller
@@ -32,46 +32,13 @@ namespace QLMB.Controllers
             return false;
         }
 
-        // GET: Property
+        // GET: Property -- | [Facade Pattern] | --
         [HttpGet]
         public ActionResult Index(string keyword)
         {
-            try
-            {
-                if (IsValidRole())
-                {
-                    IQueryable<MatBang> matBangs = db.MatBangs.Include(m => m.TinhTrang);
-                    List<MatBang> dsmb = db.MatBangs.ToList();
-                    if (keyword == null || keyword == "")
-                    {
-                        if (dsmb.Count == 0)
-                        {
-                            ViewBag.NullData = "Không có dữ liệu nào!";
-                        }
-
-                        return View(dsmb);
-                    }
-                    else
-                    {
-                        matBangs = db.MatBangs.Include(m => m.TinhTrang);
-                        dsmb = db.MatBangs.
-                            Where(k => k.MaMB.ToUpper().Contains(keyword.ToUpper())).ToList();
-                        if(dsmb.Count == 0)
-                        {
-                            ViewBag.NullData = "Không có dữ liệu nào!";
-                        }
-
-                        return View(dsmb);
-                    }
-                }
-                Session["Page"] = "Property";
-
-                return RedirectToAction("Login", "Login");
-            }
-            catch 
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(keyword, RoleType.MB);
         }
         public ActionResult Create()
         {

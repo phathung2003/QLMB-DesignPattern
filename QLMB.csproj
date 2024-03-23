@@ -149,6 +149,12 @@
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\ConcreteHandler\ConcreteCreateAccount.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\Interface\IHandlerEmployeeRegister.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\PhraseType.cs" />
+    <Compile Include="Design_Pattern\Facade\Facade\FacadeMainPage.cs" />
+    <Compile Include="Design_Pattern\Facade\RoleType.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\EventPageSubClass.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\HumanResoucrePageSubClass.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\PropertyPageSubClass.cs" />
+    <Compile Include="Design_Pattern\Facade\SubClass\SalePageSubClass.cs" />
     <Compile Include="Design_Pattern\Factory_Method\ConcreteCreator\ConcreteCreatorManager.cs" />
     <Compile Include="Design_Pattern\Factory_Method\ConcreteCreator\ConcreteCreatorRentail.cs" />
     <Compile Include="Design_Pattern\Factory_Method\Interface\ILoginChecker.cs" />

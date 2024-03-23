@@ -9,41 +9,20 @@ using QLMB.Design_Pattern.Strategy.ConcreteFactory;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.ConcreteHandler;
 using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
+using QLMB.Design_Pattern.Facade;
+using System.Web;
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
     {
         private database database = new database();
 
-        //Trang chủ
+        //Trang chủ -- | [Facade Pattern] | --
         public ActionResult Main(string nameSearch)
         {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (CheckRole())
-                {
-                    var data = database.NhanViens.ToList();
-
-                    //Xử lý tìm kiếm
-                    if (nameSearch != null)
-                    {
-                        data = data.Where(s => s.MaNV.ToString().Contains(nameSearch) ||
-                                               s.ChucVu.TenCV.ToUpper().Contains(nameSearch) ||
-                                               s.CMND.Trim().Contains(nameSearch) ||
-                                               s.ThongTinND.HoTen.ToUpper().Contains(nameSearch.ToUpper()) ||
-                                               s.TinhTrang.TenTT.ToUpper().Contains(nameSearch.ToUpper())).ToList();
-                    }
-
-                    //Dùng để xử lý về lại trang trước đó
-                    Session["Page"] = "EmployeeMain";
-                    return View(data);
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch,RoleType.NS);
         }
 
         //Trang chi tiết

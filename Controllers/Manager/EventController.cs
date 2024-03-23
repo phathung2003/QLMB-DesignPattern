@@ -1,62 +1,33 @@
 ﻿using QLMB.Models;
 using System.Linq;
 using System.Web.Mvc;
-using System.Collections.Generic;
 using QLMB.Models.Process;
 using QLMB.Design_Pattern.Prototype.ConcretePrototype;
 using QLMB.Design_Pattern.Adapter.Interface;
 using QLMB.Design_Pattern.Adapter.Adapter;
 using QLMB.Design_Pattern.Adapter.Adaptee;
-
+using QLMB.Design_Pattern.Facade;
+using System.Web;
 namespace QLMB.Controllers
 {
     public class EventController : Controller
     {
-        private database db = new database();
+        private database database = new database();
 
-        // GET: Event
+        // GET: Event -- | [Facade Pattern] | --
         public ActionResult EventMain(string nameSearch)
         {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (checkRole())
-                {
-                    List<SuKienUuDai> data = Shared.listSKUD(db, nameSearch, "SK");
-
-                    //Dùng để xử lý về lại trang trước đó
-                    Session["Page"] = "EventMain";
-                    Session["EventLocal"] = "EventMain";
-                    Session.Remove("EventTemp");
-                    return View(data);
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch, RoleType.SK);
         }
 
+        // GET: Sale -- | [Facade Pattern] | --
         public ActionResult SaleMain(string nameSearch)
         {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (checkRole())
-                {
-                    List<SuKienUuDai> data = Shared.listSKUD(db, nameSearch, "UD");
-                    
-                    //Dùng để xử lý về lại trang trước đó
-                    Session["Page"] = "SaleMain";
-                    Session["EventLocal"] = "SaleMain";
-                    Session.Remove("EventTemp");
-                    return View(data);
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch, RoleType.UD);
         }
 
         public ActionResult Detail(string maDon)
@@ -74,7 +45,7 @@ namespace QLMB.Controllers
                     }    
                     else
                     {
-                        info = db.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
+                        info = database.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
                         Session["EventTemp"] = info;
                     }
 
@@ -104,7 +75,7 @@ namespace QLMB.Controllers
                     }      
                     else
                     {
-                        info = db.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
+                        info = database.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
                         Session["EventTemp"] = info;
                     }
 
@@ -154,10 +125,10 @@ namespace QLMB.Controllers
                 IConvertPost convertClonePost = new AdapterEventSalePost(new AdapteeChangeFormat());
                 SuKienUuDai postConvert = convertClonePost.ConvertToSKUD(clonePost);
 
-                int nextID = Shared.CreateIDSKUD(db, postConvert.MaDM);
+                int nextID = Shared.CreateIDSKUD(database, postConvert.MaDM);
                 clonePost.info.MaDon = clonePost.info.MaDM + $"{nextID:0000}";
-                db.SuKienUuDais.Add(clonePost.info);
-                db.SaveChanges();
+                database.SuKienUuDais.Add(clonePost.info);
+                database.SaveChanges();
 
                 TempData["msg"] = $"<script>alert('{"Tạo bản sao thành công"}');</script>";
                 return RedirectToAction("returnLocal", "Event");
