@@ -36,17 +36,17 @@ namespace QLMB.Controllers
                         return RedirectToAction("Login", "Login");
                     }
                     else
-                        ModelState.AddModelError("TrungTaiKhoan", saveInfo.Item2);
+                        ModelState.AddModelError("BaoLoi", saveInfo.Item2);
                 }
                 else
-                    ModelState.AddModelError("TrungCMND", checkAccount.Item2);
+                    ModelState.AddModelError("BaoLoi", checkAccount.Item2);
             }
             Session["PrevUsername"] = username;
             return View();
         }
 
-        //Kiểm tra thông tin - -- | [Strategy Pattern] | --
-        private bool checkInfo(ThongTinND thongTin, string username, string password, string rePassword)
+        //Kiểm tra thông tin -- | [Strategy Pattern] | --
+        private bool checkInfo(ThongTinND info, string username, string password, string rePassword)
         {
             ModelStateDictionary modelState = this.ModelState;
             ContextStrategy checkResult;
