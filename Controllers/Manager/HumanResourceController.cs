@@ -33,15 +33,11 @@ namespace QLMB.Controllers
                 //Kiểm tra hợp lệ
                 if (CheckRole())
                 {
-                    if (Session["Page"] == null)
-                        return RedirectToAction("Main");
+                    if (Session["Page"] == null) { return RedirectToAction("Main"); }
 
                     ThongTinND info;
 
-                    if (CMND == null && Session["HumanResourceTemp"] != null)
-                    {
-                        info = (ThongTinND)Session["HumanResourceTemp"];
-                    }
+                    if (CMND == null && Session["HumanResourceTemp"] != null) { info = (ThongTinND)Session["HumanResourceTemp"]; }
                     else
                     {
                         info = database.ThongTinNDs.Where(s => s.CMND == CMND).FirstOrDefault();
@@ -68,8 +64,7 @@ namespace QLMB.Controllers
 
             if (button != null)
             {
-                if (Edit.EmployeeStatus(employee, button))
-                    return RedirectToAction("Detail", "HumanResource", new { CMND = info.CMND.Trim() });
+                if (Edit.EmployeeStatus(employee, button)) { return RedirectToAction("Detail", "HumanResource", new { CMND = info.CMND.Trim() }); }
             }
 
             string currentCMND = ((NhanVien)Session["HumanResourceEmployeeTemp"]).CMND.Trim();
@@ -80,8 +75,7 @@ namespace QLMB.Controllers
                 NhanVien current = (NhanVien)Session["HumanResourceEmployeeTemp"];
 
                 //Xử lý việc tự edit cho chính mình
-                if (user.MaChucVu.Trim() == current.MaChucVu.Trim() && current.MaChucVu.Trim() == "NS")
-                    role.MaChucVu = "NS";
+                if (user.MaChucVu.Trim() == current.MaChucVu.Trim() && current.MaChucVu.Trim() == "NS") { role.MaChucVu = "NS"; }
 
                 (bool, string) saveDetail = Edit.EmployeeInfo(info, (NhanVien)Session["HumanResourceEmployeeTemp"], role, currentCMND);
                 if (saveDetail.Item1)
@@ -92,10 +86,7 @@ namespace QLMB.Controllers
                 }
                 ModelState.AddModelError("editStatus", saveDetail.Item2);
             }
-            else
-            {
-                ModelState.AddModelError("editStatus", "Đổi thông tin thất bại");
-            }
+            else { ModelState.AddModelError("editStatus", "Đổi thông tin thất bại"); }
             return View(info);
         }
 
@@ -206,10 +197,7 @@ namespace QLMB.Controllers
             checkResult.SetStrategy(new ConcreteRole(modelState, "editRole", user.MaChucVu, role.MaChucVu));
             checkResult.GetResult();
 
-            if (checkResult.noError)
-            {
-                return true;
-            }
+            if (checkResult.noError) { return true; }
 
             Session["TempRole"] = role.MaChucVu;
             return false;
@@ -219,12 +207,11 @@ namespace QLMB.Controllers
         private bool CheckRole()
         {
             //Nếu EmployeeInfo == null --> Chưa đăng nhập
-            if (Session["EmployeeInfo"] == null)
-                return false;
+            if (Session["EmployeeInfo"] == null) { return false; }
 
             //Đúng Role --> Vào
-            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "NS")
-                return true;
+            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "NS") { return true; }
+            
             return false;
         }
     }

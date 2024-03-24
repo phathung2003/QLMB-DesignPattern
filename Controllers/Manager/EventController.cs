@@ -39,10 +39,7 @@ namespace QLMB.Controllers
                 {
                     SuKienUuDai info = new SuKienUuDai();
 
-                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null)
-                    {
-                        info = (SuKienUuDai)Session["EventTemp"];
-                    }    
+                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null) { info = (SuKienUuDai)Session["EventTemp"]; }    
                     else
                     {
                         info = database.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
@@ -69,10 +66,7 @@ namespace QLMB.Controllers
                 {
                     SuKienUuDai info = new SuKienUuDai();
 
-                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null)
-                    {
-                        info = (SuKienUuDai)Session["EventTemp"];
-                    }      
+                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null) { info = (SuKienUuDai)Session["EventTemp"]; }      
                     else
                     {
                         info = database.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
@@ -93,10 +87,7 @@ namespace QLMB.Controllers
         [HttpPost]
         public ActionResult Detail(SuKienUuDai info, string btn)
         {
-            if(btn == "Duplicate")
-            {
-                return RedirectToAction("Duplicate", "Event", new {maDon = info.MaDon });
-            }
+            if(btn == "Duplicate") { return RedirectToAction("Duplicate", "Event", new { maDon = info.MaDon }); }
 
             string MaNV = ((NhanVien)Session["EmployeeInfo"]).MaNV;
             (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(info.MaDon, MaNV, btn);
@@ -110,6 +101,7 @@ namespace QLMB.Controllers
             return View(saveVerified.Item3);
         }
 
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Duplicate(SuKienUuDai info, string btn)
@@ -143,12 +135,10 @@ namespace QLMB.Controllers
         private bool checkRole()
         {
             //Nếu EmployeeInfo == null --> Chưa đăng nhập
-            if (Session["EmployeeInfo"] == null)
-                return false;
+            if (Session["EmployeeInfo"] == null) { return false; }
 
             //Đúng Role --> Vào
-            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "SKUD")
-                return true;
+            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "SKUD") { return true; }
 
             return false;
         }
@@ -156,8 +146,7 @@ namespace QLMB.Controllers
         {
             if(Session["EventLocal"] != null)
             {
-                if (Session["EventLocal"].ToString().Trim() == "SaleMain")
-                    return Redirect("SaleMain");
+                if (Session["EventLocal"].ToString().Trim() == "SaleMain") { return Redirect("SaleMain"); }
             }
             return Redirect("EventMain");
         }

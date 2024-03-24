@@ -3,14 +3,12 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using QLMB.Models;
-
 namespace QLMB.Controllers
 {
     public class PropertyRentController : Controller
     {
         private database db = new database();
         private readonly string ROLE = "MB";
-
         /*
             Boolean condition(s)
             1.  Users that have logged in
@@ -18,16 +16,12 @@ namespace QLMB.Controllers
         */
         public bool IsValidRole()
         {
-            if (Session["EmployeeInfo"] == null)
-            {
-                return false;
-            }
+            if (Session["EmployeeInfo"] == null) { return false; }
             //Đúng Role --> Vào
-            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == ROLE)
-                return true;
-
+            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == ROLE) { return true; }
             return false;
         }
+
         // GET: PropertyRent
         public ActionResult Index(string keyword)
         {
@@ -56,24 +50,17 @@ namespace QLMB.Controllers
                     return View(donXinThues.ToList());
                 }
             }
-
             return RedirectToAction("Login", "Login");
-
         }
+
         // GET: PropertyRent/Details/5
         public ActionResult Details(string id)
         {
             if (IsValidRole())
             {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
+                if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
                 DonXinThue donXinThue = db.DonXinThues.Find(id);
-                if (donXinThue == null)
-                {
-                    return HttpNotFound();
-                }
+                if (donXinThue == null) { return HttpNotFound(); }
                 return View(donXinThue);
             }
 
@@ -83,31 +70,19 @@ namespace QLMB.Controllers
         {
             if (IsValidRole())
             {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
+                if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
                 DonXinThue donXinThue = db.DonXinThues.Find(id);
-                if (donXinThue == null)
-                {
-                    ViewBag.ServerError = "Lỗi tham số!";
-                }
-
+                if (donXinThue == null){ ViewBag.ServerError = "Lỗi tham số!"; }
                 donXinThue.MATT = 2;
                 db.Entry(donXinThue).State = EntityState.Modified;
                 db.SaveChanges();
-
                 return RedirectToAction("Index", "PropertyRent");
             }
-
             return RedirectToAction("Login", "Login");
         }
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            if (disposing) { db.Dispose(); }
             base.Dispose(disposing);
         }
     }

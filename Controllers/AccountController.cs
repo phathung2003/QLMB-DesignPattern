@@ -5,12 +5,11 @@ using QLMB.Models;
 using QLMB.Models.Process;
 using System.Linq;
 using System.Web.Mvc;
-
 namespace QLMB.Controllers
 {
     public class AccountController : Controller
     {
-        private database db = new database();
+        private database database = new database();
         
         //Quản lý chuyển trang
         public ActionResult Manager()
@@ -103,7 +102,7 @@ namespace QLMB.Controllers
             {
                 //Dùng để xử lý về lại trang trước đó
                 Session["Page"] = "FirstLogin";
-                return View(db.NhanViens.Where(s => s.MaNV == MANV).FirstOrDefault());
+                return View(database.NhanViens.Where(s => s.MaNV == MANV).FirstOrDefault());
             }
             return Manager();
         }
@@ -112,11 +111,11 @@ namespace QLMB.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FirstLogin(NhanVien info, string rePass)
         {
-            if (checkFirstTime(info, rePass))
+            if (CheckFirstTime(info, rePass))
             {
                 if (Edit.EployeeFirstLogin(info))
                 {
-                    Session["EmployeeInfo"] = db.NhanViens.Where(s => s.MaNV.Trim() == info.MaNV.Trim()).FirstOrDefault();
+                    Session["EmployeeInfo"] = database.NhanViens.Where(s => s.MaNV.Trim() == info.MaNV.Trim()).FirstOrDefault();
                     return Manager();
                 }
                     
@@ -135,14 +134,14 @@ namespace QLMB.Controllers
                 return Manager();
 
             string CMND = ((ThongTinND)Session["UserInfo"]).CMND.Trim();
-            return View(db.ThongTinNDs.Where(s => s.CMND == CMND.Trim()).FirstOrDefault());
+            return View(database.ThongTinNDs.Where(s => s.CMND == CMND.Trim()).FirstOrDefault());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult General(ThongTinND info)
         {
-            if (checkGeneral(info))
+            if (CheckGeneral(info))
             {
                 (bool, string) saveProfile = Edit.EmployeeProfile(info);
                 
@@ -175,14 +174,14 @@ namespace QLMB.Controllers
                 return Manager();
 
             string MANV = ((NhanVien)Session["EmployeeInfo"]).MaNV.Trim();
-            return View(db.NhanViens.Where(s => s.MaNV == MANV.Trim()).FirstOrDefault());
+            return View(database.NhanViens.Where(s => s.MaNV == MANV.Trim()).FirstOrDefault());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ChangePassword(NhanVien info, string currentPass, string rePass)
         {
-            if (checkChangePassword(info, currentPass, rePass))
+            if (CheckChangePassword(info, currentPass, rePass))
             {
                 (bool, string) savePassword = Edit.EmployeePassword(info);
 
@@ -198,7 +197,7 @@ namespace QLMB.Controllers
 
 
         //*-- Kiểm tra Đăng nhập lần đầu --*// - [Strategy Pattern]
-        private bool checkFirstTime(NhanVien info, string rePass)
+        private bool CheckFirstTime(NhanVien info, string rePass)
         {
             ModelStateDictionary modelState = this.ModelState;
             ContextStrategy checkResult;
@@ -215,7 +214,7 @@ namespace QLMB.Controllers
         }
 
         //*-- Kiểm tra Tổng quát --*// - [Strategy Pattern]
-        private bool checkGeneral(ThongTinND info)
+        private bool CheckGeneral(ThongTinND info)
         {
             ModelStateDictionary modelState = this.ModelState;
             ContextStrategy checkResult;
@@ -236,7 +235,7 @@ namespace QLMB.Controllers
         }
 
         //*-- Kiểm tra Đổi mật khẩu --*// - [Strategy Pattern]
-        private bool checkChangePassword(NhanVien info, string current, string rePass)
+        private bool CheckChangePassword(NhanVien info, string current, string rePass)
         {
             ModelStateDictionary modelState = this.ModelState;
             ContextStrategy checkResult;

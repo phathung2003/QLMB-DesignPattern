@@ -54,10 +54,7 @@ namespace QLMB.Controllers
 
                 return RedirectToAction("Login", "Login");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
         public ActionResult Details(string id)
         {
@@ -65,25 +62,17 @@ namespace QLMB.Controllers
             {
                 if (IsValidRole())
                 {
-                    if (id == null)
-                    {
-                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                    }
+                    if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+                    
                     MatBang matBang = db.MatBangs.Find(id);
-                    if (matBang == null)
-                    {
-                        return HttpNotFound();
-                    }
+                    if (matBang == null) { return HttpNotFound(); }
 
                     return View(matBang);
                 }
 
                 return RedirectToAction("Login", "Login");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
         public ActionResult Delete(string id)
         {
@@ -91,26 +80,19 @@ namespace QLMB.Controllers
             {
                 if (IsValidRole())
                 {
-                    if (id == null)
-                    {
-                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                    }
+                    if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
                     MatBang matBang = db.MatBangs.Find(id);
-                    if (matBang == null)
-                    {
-                        return HttpNotFound();
-                    }
+                    
+                    if (matBang == null) { return HttpNotFound(); }
 
                     return View(matBang);
                 }
 
                 return RedirectToAction("Login", "Login");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
+        
         public string GetImagePath(string fileName)
         {
             return Path.Combine(Server.MapPath(MatBang.SERVER_IMG_PATH), fileName);
@@ -125,16 +107,11 @@ namespace QLMB.Controllers
             {
                 // Try to assign 6-chars PropertyID
                 string idTmp = RandomID.Get();
-                while(RandomID.ExistPropertyID(idTmp))
-                {
-                    idTmp = RandomID.Get();
-                }
+                while(RandomID.ExistPropertyID(idTmp)) { idTmp = RandomID.Get(); }
+
                 matBang.MaMB = idTmp;
                 // Assign value for property
-                if(matBang.TienThue == 0)
-                {
-                    matBang.TienThue = MatBang.SINGLE_PRICE * matBang.DienTich;
-                }
+                if(matBang.TienThue == 0) { matBang.TienThue = MatBang.SINGLE_PRICE * matBang.DienTich; }
 
                 if(ModelState.IsValid)
                 {
@@ -153,11 +130,9 @@ namespace QLMB.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
+
         // POST: Property/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -171,19 +146,13 @@ namespace QLMB.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
         // Dispose
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            if (disposing) { db.Dispose(); }
             base.Dispose(disposing);
         }
     }

@@ -6,7 +6,6 @@ namespace QLMB.Controllers
 {
     public class LoginController : Controller
     {
-
         // Trang đăng nhập (Chung)
         public ActionResult Login() { return View(); }
         
@@ -33,10 +32,7 @@ namespace QLMB.Controllers
 
                 //Nếu tên đăng nhập > 8 ký tự ==> Người thuê
                 loginChecker = new ConcreteCreatorRentail();
-                if (loginChecker.GetLogin(username, password,modelState)) 
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+                if (loginChecker.GetLogin(username, password,modelState)) { return RedirectToAction("Index", "Home"); }
 
                 //Còn lại ==> Nhân viên
                 loginChecker = new ConcreteCreatorManager();
@@ -55,10 +51,7 @@ namespace QLMB.Controllers
                 }
                 return View("Login");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
         //POST đăng nhập (Nhân viên) -- | [Factory Method Pattern] | --
@@ -86,10 +79,7 @@ namespace QLMB.Controllers
                 }
                 return View("StaffLogin");
             }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
         //Lấy thông tin nhân viên

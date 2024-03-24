@@ -1,23 +1,15 @@
 ﻿using QLMB.Design_Pattern.Proxy.Interface;
 using QLMB.Design_Pattern.Proxy.Proxy;
 using QLMB.Design_Pattern.Proxy.Service;
-using QLMB.Design_Pattern.Strategy.ConcreteFactory;
-using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
-using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
-using QLMB.Models.Process;
 using System.Web.Mvc;
 namespace QLMB.Controllers
 {
     public class RegisterController : Controller
     {
-        private database db = new database();
-        private ThongTinND info = new ThongTinND();
-
         //----------- Người thuê -----------//
         //Trang đăng ký
         public ActionResult rentalInfo() { return View(); }
-
 
         //Xử lý thông tin -- | [Proxy Pattern] | --
         [HttpPost]

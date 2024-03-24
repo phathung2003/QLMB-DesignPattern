@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Web.Mvc;
 using System.Collections.Generic;
-
 namespace QLMB.Controllers
 {
     public class ViewModel

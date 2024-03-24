@@ -18,7 +18,7 @@ namespace QLMB.Design_Pattern.Proxy.Proxy
 
         public bool UserRegister(ThongTinND info, string username, string password, string rePassword, ModelStateDictionary modelState)
         {
-            if(checkInfo(info, username, password, rePassword, modelState))
+            if(CheckInfo(info, username, password, rePassword, modelState))
             {
                 return registerService.UserRegister(info, username, password, rePassword, modelState);
             }
@@ -26,7 +26,7 @@ namespace QLMB.Design_Pattern.Proxy.Proxy
         }
 
         //Kiểm tra thông tin -- | [Strategy Pattern] | --
-        private bool checkInfo(ThongTinND info, string username, string password, string rePassword, ModelStateDictionary modelState)
+        private bool CheckInfo(ThongTinND info, string username, string password, string rePassword, ModelStateDictionary modelState)
         {
             ContextStrategy checkResult;
 
