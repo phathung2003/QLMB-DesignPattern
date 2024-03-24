@@ -9,7 +9,7 @@ namespace QLMB.Design_Pattern.Factory
 {
     public class ConcreteManagerLoginChecker : ILoginChecker
     {
-        private readonly database db = new database();
+        private readonly database database = new database();
 
         //Nhân viên -- | [Strategy Pattern] | --
         public bool CheckLogin(string username, string password, ModelStateDictionary modelState)
@@ -38,7 +38,7 @@ namespace QLMB.Design_Pattern.Factory
                     else
                         HttpContext.Current.Session["AccountName"] = name[name.Length - 2] + " " + name[name.Length - 1];
 
-                    ThongTinND employeeInfo = db.ThongTinNDs.Where(s => s.CMND == checkLogin.Item3.CMND).FirstOrDefault();
+                    ThongTinND employeeInfo = database.ThongTinNDs.Where(s => s.CMND == checkLogin.Item3.CMND).FirstOrDefault();
 
                     HttpContext.Current.Session["EmployeeInfo"] = checkLogin.Item3;
                     HttpContext.Current.Session["UserInfo"] = employeeInfo;

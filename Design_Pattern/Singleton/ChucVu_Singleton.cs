@@ -1,8 +1,6 @@
 ﻿using QLMB.Models;
 using System.Collections.Generic;
 using System.Linq;
-
-
 namespace QLMB.Design_Pattern.Singleton
 {
     public sealed class ChucVu_Singleton

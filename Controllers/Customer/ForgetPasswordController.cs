@@ -8,13 +8,10 @@ namespace QLMB.Controllers
 {
     public class ForgetPasswordController : Controller
     {
-        private database db = new database();
+        private database database = new database();
         
         //Trang quên mật khẩu
-        public ActionResult ForgetPassword()
-        {
-            return View();
-        }
+        public ActionResult ForgetPassword() { return View(); }
 
         //Xử lý lấy CMND
         [HttpPost]
@@ -24,10 +21,10 @@ namespace QLMB.Controllers
             try
             {
                 //Nếu tên đăng nhập > 8 ký tự ==> Người thuê
-                if (checkInfo(CMND) == true)
+                if (CheckInfo(CMND) == true)
                 {
-                    (bool,string,NguoiThue) customer = Validation.ExistAccountCustomer(db, CMND);
-                    (bool, string, NhanVien) employee = Validation.ExistAccountEmployee(db, CMND);
+                    (bool,string,NguoiThue) customer = Validation.ExistAccountCustomer(database, CMND);
+                    (bool, string, NhanVien) employee = Validation.ExistAccountEmployee(database, CMND);
 
                     if (customer.Item1)
                     {
@@ -43,8 +40,7 @@ namespace QLMB.Controllers
                     //    Session["TenDangNhap"] = employee.Item3.MaNV.Trim();
                     //    return RedirectToAction("rePasswordNhanVien", "ForgetPassword");
                     //}
-                    else 
-                        ModelState.AddModelError("forgetError", customer.Item2);
+                    else { ModelState.AddModelError("forgetError", customer.Item2); } 
                 }
                 return View();
             }
@@ -52,7 +48,7 @@ namespace QLMB.Controllers
         }
 
         //Check CMND người thuê - [Strategy Pattern]
-        private bool checkInfo(string CMND)
+        private bool CheckInfo(string CMND)
         {
             ModelStateDictionary modelState = this.ModelState;
             ContextStrategy checkResult;
@@ -69,10 +65,8 @@ namespace QLMB.Controllers
         //Cài lại mật khẩu
         public ActionResult rePasswordNguoiThue()
         {
-            if (Session["TenDangNhap"] != null)
-                return View();
-            else
-                return RedirectToAction("ForgetPassword", "ForgetPassword");
+            if (Session["TenDangNhap"] != null) { return View(); }
+            else { return RedirectToAction("ForgetPassword", "ForgetPassword"); }
         }
 
         //Cập nhật mật khẩu
@@ -82,11 +76,9 @@ namespace QLMB.Controllers
         {
             switch (choice)
             {
-                case "Quay lại":
-                    return RedirectToAction("ForgetPassword", "ForgetPassword");
-                
+                case "Quay lại": return RedirectToAction("ForgetPassword", "ForgetPassword");
                 default:
-                    if (checkRePassword(nguoiThue, rePass) == true)
+                    if (CheckRePassword(nguoiThue, rePass) == true)
                     {
                         nguoiThue.CMND = Session["CMND"].ToString();
                         nguoiThue.TenDangNhap = Session["TenDangNhap"].ToString();
@@ -109,7 +101,7 @@ namespace QLMB.Controllers
 
 
         //Check mật khẩu mới - [Strategy Pattern]
-        private bool checkRePassword(NguoiThue nguoiThue, string rePass)
+        private bool CheckRePassword(NguoiThue nguoiThue, string rePass)
         {
             ModelStateDictionary modelState = this.ModelState;
             ContextStrategy checkResult;
