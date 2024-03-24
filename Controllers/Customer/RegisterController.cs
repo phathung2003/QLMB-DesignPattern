@@ -1,4 +1,7 @@
-﻿using QLMB.Design_Pattern.Strategy.ConcreteFactory;
+﻿using QLMB.Design_Pattern.Proxy.Interface;
+using QLMB.Design_Pattern.Proxy.Proxy;
+using QLMB.Design_Pattern.Proxy.Service;
+using QLMB.Design_Pattern.Strategy.ConcreteFactory;
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Models;
@@ -19,27 +22,16 @@ namespace QLMB.Controllers
         //Xử lý thông tin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RentalInfo(ThongTinND thongTin, string username, string password, string rePassword)
+        public ActionResult RentalInfo(ThongTinND info, string username, string password, string rePassword)
         {
-            if (checkInfo(thongTin, username, password, rePassword))
+            ModelStateDictionary modelState = this.ModelState;
+            IRegister customerRegister = new RegisterProxy(new CustomerRegisterService());
+
+            if (customerRegister.UserRegister(info, username, password, rePassword, modelState))
             {
-                (bool, string) checkAccount = Validation.ExistAccount(db, thongTin.CMND, thongTin.HoTen);
-
-                if (checkAccount.Item1)
-                {
-                    (bool, string) saveInfo = Create.Customer(thongTin, username, password);
-
-                    if (saveInfo.Item1)
-                    {
-                        Session.Remove("PrevUsername");
-                        TempData["msg"] = $"<script>alert('{saveInfo.Item2}');</script>";
-                        return RedirectToAction("Login", "Login");
-                    }
-                    else
-                        ModelState.AddModelError("BaoLoi", saveInfo.Item2);
-                }
-                else
-                    ModelState.AddModelError("BaoLoi", checkAccount.Item2);
+                Session.Remove("PrevUsername");
+                TempData["msg"] = $"<script>alert('{"Đăng ký thành công"}');</script>";
+                return RedirectToAction("Login", "Login");
             }
             Session["PrevUsername"] = username;
             return View();
