@@ -1,23 +1,29 @@
-﻿using System;
+﻿using QLMB.Design_Pattern.Facade;
+using System;
 using System.Web.Mvc;
 
 public abstract class ControllerTemplate : Controller
 {
     protected abstract bool checkRole();
+    protected abstract void ExecuteAction();
+    protected abstract ActionResult HandleUnauthorizedAccess();
     protected abstract ActionResult HandleException(Exception ex);
-   
+ 
+
+
     //Template Method
-    public ActionResult ExecuteAction(Func<ActionResult> action)
+    public ActionResult TemplateMethod()
     {
         try
         {
             if (checkRole())
             {
-                return action();
+                  ExecuteAction();
+                return null;
             }
             else
             {
-                return RedirectToAction("Manager", "Account");
+                return HandleUnauthorizedAccess();
             }
         }
         catch (Exception ex)
@@ -25,4 +31,4 @@ public abstract class ControllerTemplate : Controller
             return HandleException(ex);
         }
     }
-}
+}   

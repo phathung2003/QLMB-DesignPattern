@@ -19,26 +19,43 @@ namespace QLMB.Controllers
     {
         private database database = new database();
 
+        protected override void ExecuteAction()
+        {
+            string action = ControllerContext.RouteData.Values["action"].ToString();
+            string id = ControllerContext.RouteData.Values["id"]?.ToString();
+
+            switch (action)
+            {
+                case "Main":
+                    Main(null);
+                    break;
+                case "Detail":
+                    Detail(id);
+                    break;
+                case "Register":
+                    Register();
+                    break;
+                case "SelectRole":
+                    SelectRole(id);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         //Trang chủ -- | [Facade Pattern] | --
         public ActionResult Main(string nameSearch)
         {
-            return ExecuteAction(() =>
-            {
-                HttpSessionStateBase session = this.Session;
-                FacadeMainPage page = new FacadeMainPage(session);
-                return page.MainPage(nameSearch, RoleType.NS);
-            });
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch,RoleType.NS);
         }
 
         //Trang chi tiết
         public ActionResult Detail(string CMND)
-        {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (checkRole())
-                {
-                    if (Session["Page"] == null) { return RedirectToAction("Main"); }
+        {  
+                    if (Session["Page"] == null)
+                        return RedirectToAction("Main");
 
                     ThongTinND info;
 
@@ -52,13 +69,7 @@ namespace QLMB.Controllers
                     }
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EmployeeDetail";
-                    return View(info);
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+                    return View(info); 
         }
 
         [HttpPost]
@@ -97,22 +108,11 @@ namespace QLMB.Controllers
 
         //Trang đăng ký
         public ActionResult Register()
-        {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (checkRole())
-                {
+        {  
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EmployeeRegister";
                     Session.Remove("TempRole");
                     return View();
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
         }
 
         //Xử lý thông tin đăng ký -- | [Chain Of Responsibility Pattern] | --
@@ -218,6 +218,10 @@ namespace QLMB.Controllers
             if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "NS") { return true; }
             
             return false;
+        }
+        protected override ActionResult HandleUnauthorizedAccess()
+        {
+            return RedirectToAction("Manager", "Account");
         }
         protected override ActionResult HandleException(Exception ex)
         {
