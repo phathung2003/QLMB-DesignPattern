@@ -21,17 +21,44 @@ namespace QLMB.Controllers
             1.  Users that have logged in
             2.  Users with a valid role
         */
+        //Kiểm tra hợp lệ
         protected override bool checkRole()
         {
+            //Nếu EmployeeInfo == null --> Chưa đăng nhập
             if (Session["EmployeeInfo"] == null)
-            {
                 return false;
-            }
-            //Đúng Role --> Vào
-            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == ROLE)
-                return true;
 
+            //Đúng Role --> Vào
+            if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "NS")
+                return true;
             return false;
+        }
+        protected override void ExecuteAction()
+        {
+            string action = ControllerContext.RouteData.Values["action"].ToString();
+            string id = ControllerContext.RouteData.Values["id"]?.ToString();
+
+            switch (action)
+            {
+                case "Index":
+                    Index(null);
+                    break;
+                case "Create":
+                    Create();
+                    break;
+                case "Details":
+                    Details(id);
+                    break;
+                case "Delete":
+                    Delete(id);
+                    break;
+                default:
+                    break;
+            }
+        }
+        protected override ActionResult HandleUnauthorizedAccess()
+        {
+            return RedirectToAction("Login", "Login");
         }
         protected override ActionResult HandleException(Exception ex)
         {
@@ -41,38 +68,23 @@ namespace QLMB.Controllers
         [HttpGet]
         public ActionResult Index(string keyword)
         {
-            return ExecuteAction(() =>
-            {
+            
+            
                 HttpSessionStateBase session = this.Session;
                 FacadeMainPage page = new FacadeMainPage(session);
                 return page.MainPage(keyword, RoleType.MB);
-            });
+           
         }
         public ActionResult Create()
-        {
-            try
-            {
-                if (checkRole())
-                {
+        {              
                     List<TinhTrang> dsTinhTrang = db.TinhTrangs.Where(k => k.MATT >= 7).ToList();
                     ViewBag.MATT = new SelectList(dsTinhTrang, "MaTT", "TenTT");
 
                     return View();
-                }
 
-                return RedirectToAction("Login", "Login");
-            }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
         }
         public ActionResult Details(string id)
-        {
-            try
-            {
-                if (checkRole())
-                {
+        {         
                     if (id == null)
                     {
                         return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -83,22 +95,10 @@ namespace QLMB.Controllers
                         return HttpNotFound();
                     }
 
-                    return View(matBang);
-                }
-
-                return RedirectToAction("Login", "Login");
-            }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+                    return View(matBang);       
         }
         public ActionResult Delete(string id)
         {
-            try
-            {
-                if (checkRole())
-                {
                     if (id == null)
                     {
                         return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -110,14 +110,7 @@ namespace QLMB.Controllers
                     }
 
                     return View(matBang);
-                }
-
-                return RedirectToAction("Login", "Login");
-            }
-            catch
-            {
-                return RedirectToAction("Index", "SkillIssue");
-            }
+                     
         }
         public string GetImagePath(string fileName)
         {
