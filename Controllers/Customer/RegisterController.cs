@@ -19,7 +19,7 @@ namespace QLMB.Controllers
         public ActionResult rentalInfo() { return View(); }
 
 
-        //Xử lý thông tin
+        //Xử lý thông tin -- | [Proxy Pattern] | --
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RentalInfo(ThongTinND info, string username, string password, string rePassword)
@@ -36,50 +36,5 @@ namespace QLMB.Controllers
             Session["PrevUsername"] = username;
             return View();
         }
-
-        //Kiểm tra thông tin -- | [Strategy Pattern] | --
-        private bool checkInfo(ThongTinND info, string username, string password, string rePassword)
-        {
-            ModelStateDictionary modelState = this.ModelState;
-            ContextStrategy checkResult;
-
-            //CMND
-            checkResult = new ContextStrategy(new ConcreteCMND(modelState, "CMND", info.CMND));
-            checkResult.GetResult();
-
-            //Ngày cấp
-            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap)   );
-            checkResult.GetResult();
-
-            //Họ tên
-            checkResult.SetStrategy(new ConcreteName(modelState, "HoTen", info.HoTen));
-            checkResult.GetResult();
-
-            //Giới tính
-            checkResult.SetStrategy(new ConcreteGender(modelState, "GioiTinh", info.GioiTinh));
-            checkResult.GetResult();
-
-            //Ngày sinh
-            checkResult.SetStrategy(new ConcreteBirthday(modelState, "NgaySinhND", info.NgaySinh, true));
-            checkResult.GetResult();
-
-            //Địa chỉ
-            checkResult.SetStrategy(new ConcreteAddress(modelState, "DiaChi", info.DiaChi));
-            checkResult.GetResult();
-
-            //Tên đăng nhập
-            checkResult.SetStrategy(new ConcreteUsername(modelState, "TenDangNhap", username, true));
-            checkResult.GetResult();
-
-            //Mật khẩu
-            checkResult.SetStrategy(new ConcretePassword(modelState, "MatKhau", password));
-            checkResult.GetResult();
-
-            //Nhập lại mật khẩu
-            checkResult.SetStrategy(new ConcreteRePassword(modelState, "MatKhauLai", password, rePassword));
-            checkResult.GetResult();
-
-            return checkResult.noError;
-        }    
     }
 }
