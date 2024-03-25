@@ -7,78 +7,48 @@ using QLMB.Design_Pattern.Adapter.Interface;
 using QLMB.Design_Pattern.Adapter.Adapter;
 using QLMB.Design_Pattern.Adapter.Adaptee;
 using QLMB.Design_Pattern.Facade;
-
 using System.Web;
-using System;
-
+using QLMB.Design_Pattern.Template_Method.ConcreteClass;
 namespace QLMB.Controllers
 {
-    public class EventController : ControllerTemplate
+    public class EventController : Controller
     {
         private database database = new database();
-
-        protected override void ExecuteAction()
-        {
-            string action = ControllerContext.RouteData.Values["action"].ToString();
-            string id = ControllerContext.RouteData.Values["id"]?.ToString();
-
-            switch (action)
-            {
-                case "EventMain":
-                    EventMain(null);
-                    break;
-                case "SaleMain":
-                    SaleMain(null);
-                    break;
-                case "Detail":
-                    Detail(id);
-                    break;
-                case "Duplicate":
-                    Duplicate(id);
-                    break;
-                default:
-                    break;
-            }
-        }
 
         // GET: Event -- | [Facade Pattern] | --
         public ActionResult EventMain(string nameSearch)
         {
-                HttpSessionStateBase session = this.Session;
-                FacadeMainPage page = new FacadeMainPage(session);
-                return page.MainPage(nameSearch, RoleType.SK);
-          
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch, RoleType.SK);
         }
 
         // GET: Sale -- | [Facade Pattern] | --
         public ActionResult SaleMain(string nameSearch)
-        {  
-                HttpSessionStateBase session = this.Session;
-                FacadeMainPage page = new FacadeMainPage(session);
-                return page.MainPage(nameSearch, RoleType.UD); 
+        {
+            HttpSessionStateBase session = this.Session;
+            FacadeMainPage page = new FacadeMainPage(session);
+            return page.MainPage(nameSearch, RoleType.UD);
         }
 
+        // GET: Detail -- | [Template Method Pattern] | --
         public ActionResult Detail(string maDon)
-        {                                 
-                    SuKienUuDai info = new SuKienUuDai();
-
-                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null) { info = (SuKienUuDai)Session["EventTemp"]; }    
-                    else
-                    {
-                        info = database.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
-                        Session["EventTemp"] = info;
-                    }
-
-                    //Dùng để xử lý về lại trang trước đó
-                    Session["Page"] = "EventDetail";
-                    return View(info);                 
+        {
+            HttpSessionStateBase session = this.Session;
+            AbstractDetail detailPage = new ConcreteEventDetail(session);
+            return detailPage.DetailTemplateMethod(maDon);
         }
 
         public ActionResult Duplicate(string maDon)
-        {          
+        {
+            try
+            {
+                //Kiểm tra hợp lệ
+                if (checkRole() || Session["Page"] != null)
+                {
                     SuKienUuDai info = new SuKienUuDai();
 
-                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null) { info = (SuKienUuDai)Session["EventTemp"]; }      
+                    if ((maDon == null || maDon == "") && Session["EventTemp"] != null) { info = (SuKienUuDai)Session["EventTemp"]; }
                     else
                     {
                         info = database.SuKienUuDais.Where(s => s.MaDon == maDon).FirstOrDefault();
@@ -87,27 +57,33 @@ namespace QLMB.Controllers
 
                     //Dùng để xử lý về lại trang trước đó
                     Session["Page"] = "EventDuplicate";
-                    return View(info);            
-         }
+                    return View(info);
+                }
+                //Không thoả --> Về trang xử lý chuyển trang
+                return RedirectToAction("Manager", "Account");
+            }
+            //Lỗi xử lý --> Skill Issue :))
+            catch { return RedirectToAction("Index", "SkillIssue"); }
+        }
 
         [HttpPost]
         public ActionResult Detail(SuKienUuDai info, string btn)
         {
-            if(btn == "Duplicate") { return RedirectToAction("Duplicate", "Event", new { maDon = info.MaDon }); }
+            if (btn == "Duplicate") { return RedirectToAction("Duplicate", "Event", new { maDon = info.MaDon }); }
 
             string MaNV = ((NhanVien)Session["EmployeeInfo"]).MaNV;
             (bool, string, SuKienUuDai) saveVerified = Edit.EventVerified(info.MaDon, MaNV, btn);
             if (saveVerified.Item1)
             {
                 TempData["msg"] = $"<script>alert('{saveVerified.Item2}');</script>";
-                return RedirectToAction("Detail", "Event", new {maDon = info.MaDon });
+                return RedirectToAction("Detail", "Event", new { maDon = info.MaDon });
             }
-                
+
             ModelState.AddModelError("VerifiedFaield", saveVerified.Item2);
             return View(saveVerified.Item3);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Duplicate(SuKienUuDai info, string btn)
@@ -138,30 +114,19 @@ namespace QLMB.Controllers
         }
 
         //Kiểm tra hợp lệ
-        protected override bool checkRole()
+        private bool checkRole()
         {
             //Nếu EmployeeInfo == null --> Chưa đăng nhập
-            if (Session["EmployeeInfo"] == null || Session["Page"] != null)
-                return false;
+            if (Session["EmployeeInfo"] == null) { return false; }
 
             //Đúng Role --> Vào
             if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "SKUD") { return true; }
 
             return false;
         }
-
-        protected override ActionResult HandleUnauthorizedAccess()
-        {
-            return RedirectToAction("Manager", "Account");
-        }
-        protected override ActionResult HandleException(Exception ex)
-        {
-            return RedirectToAction("Index", "SkillIssue");
-        }
-
         public ActionResult returnLocal()
         {
-            if(Session["EventLocal"] != null )
+            if (Session["EventLocal"] != null)
             {
                 if (Session["EventLocal"].ToString().Trim() == "SaleMain") { return Redirect("SaleMain"); }
             }
