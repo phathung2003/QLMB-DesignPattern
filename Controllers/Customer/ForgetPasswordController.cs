@@ -4,12 +4,16 @@ using QLMB.Models.Process;
 using QLMB.Design_Pattern.Strategy.ConcreteStrategy;
 using QLMB.Design_Pattern.Strategy.Context;
 using QLMB.Design_Pattern.Strategy.ConcreteFactory;
+using QLMB.Design_Pattern.Command;
+
 namespace QLMB.Controllers
 {
     public class ForgetPasswordController : Controller
     {
+        private Controller _controller;
         private database database = new database();
-        
+        private CommandInvoker _invoker = new CommandInvoker(); // Khởi tạo CommandInvoker
+
         //Trang quên mật khẩu
         public ActionResult ForgetPassword() { return View(); }
 
@@ -59,7 +63,7 @@ namespace QLMB.Controllers
 
             return checkResult.noError;
         }
-
+        
 
         //----------- Người thuê -----------//
         //Cài lại mật khẩu
@@ -80,20 +84,10 @@ namespace QLMB.Controllers
                 default:
                     if (CheckRePassword(nguoiThue, rePass) == true)
                     {
-                        nguoiThue.CMND = Session["CMND"].ToString();
-                        nguoiThue.TenDangNhap = Session["TenDangNhap"].ToString();
-                        (bool, string) changePassword = Edit.CustomerPassword(nguoiThue);
+                        ICommand resetPasswordCommand = new ResetPasswordCommand(nguoiThue, _controller);
+                        _invoker.SetCommand(resetPasswordCommand); 
+                        _invoker.ExecuteCommand();
 
-                        if (changePassword.Item1)
-                        {
-                            TempData["msg"] = $"<script>alert('{changePassword.Item2}');</script>";
-
-                            //Xoá session
-                            Session.Remove("CMND");
-                            Session.Remove("TenDangNhap");
-                            return RedirectToAction("Login", "Login");
-                        }
-                        ModelState.AddModelError("updateError", "* Lỗi hệ thống - Xin vui lòng thử lại !");
                     }
                     return View();
             }
