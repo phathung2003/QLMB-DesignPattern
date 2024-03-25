@@ -11,6 +11,7 @@ using QLMB.Design_Pattern.Chain_Of_Responsibility.Interface;
 using QLMB.Design_Pattern.Chain_Of_Responsibility;
 using QLMB.Design_Pattern.Facade;
 using System.Web;
+using QLMB.Design_Pattern.Template_Method.ConcreteClass;
 namespace QLMB.Controllers
 {
     public class HumanResourceController : Controller
@@ -22,38 +23,15 @@ namespace QLMB.Controllers
         {
             HttpSessionStateBase session = this.Session;
             FacadeMainPage page = new FacadeMainPage(session);
-            return page.MainPage(nameSearch,RoleType.NS);
+            return page.MainPage(nameSearch, RoleType.NS);
         }
 
-        //Trang chi tiết
+        //Trang chi tiết -- | [Template Method Pattern] | --
         public ActionResult Detail(string CMND)
         {
-            try
-            {
-                //Kiểm tra hợp lệ
-                if (CheckRole())
-                {
-                    if (Session["Page"] == null) { return RedirectToAction("Main"); }
-
-                    ThongTinND info;
-
-                    if (CMND == null && Session["HumanResourceTemp"] != null) { info = (ThongTinND)Session["HumanResourceTemp"]; }
-                    else
-                    {
-                        info = database.ThongTinNDs.Where(s => s.CMND == CMND).FirstOrDefault();
-                        Session["HumanResourceTemp"] = info;
-                        Session["HumanResourceEmployeeTemp"] = database.NhanViens.Where(s => s.CMND == CMND).FirstOrDefault();
-                        Session.Remove("TempRole");
-                    }
-                    //Dùng để xử lý về lại trang trước đó
-                    Session["Page"] = "EmployeeDetail";
-                    return View(info);
-                }
-                //Không thoả --> Về trang xử lý chuyển trang
-                return RedirectToAction("Manager", "Account");
-            }
-            //Lỗi xử lý --> Skill Issue :))
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+            HttpSessionStateBase session = this.Session;
+            AbstractDetail detailPage = new ConcreteHumanResourceDetail(session);
+            return detailPage.DetailTemplateMethod(CMND);
         }
 
         [HttpPost]
@@ -146,12 +124,12 @@ namespace QLMB.Controllers
                 if (Session["TempRole"] != null)
                 {
                     ChucVu_Singleton.Instance.CurrentRole = Session["TempRole"].ToString();
-                }    
+                }
                 //Không xảy ra lỗi + Là trang thêm nhân viên => Giá trị mặc định là "Default"
                 else if (Session["Page"].ToString() == "EmployeeRegister")
                 {
                     ChucVu_Singleton.Instance.CurrentRole = "Default";
-                }    
+                }
                 //Vào trang Thông tin cá nhân
                 else
                 {
@@ -186,7 +164,7 @@ namespace QLMB.Controllers
             checkResult.GetResult();
 
             //Ngày cấp
-            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap)   );
+            checkResult.SetStrategy(new ConcreteIssuanceDate(modelState, "NgayCapCMND", info.NgayCap));
             checkResult.GetResult();
 
             //Địa chỉ
@@ -211,7 +189,7 @@ namespace QLMB.Controllers
 
             //Đúng Role --> Vào
             if (((NhanVien)Session["EmployeeInfo"]).MaChucVu.Trim() == "NS") { return true; }
-            
+
             return false;
         }
     }

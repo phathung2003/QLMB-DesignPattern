@@ -69,7 +69,35 @@ namespace QLMB.Models.Process
 
         internal static (bool, string) Employee(ThongTinND info, ChucVu role)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string authTmp = SHA256.ToSHA256(DefaultPassword);
+
+                ThongTinND setDatabase = new ThongTinND();
+                setDatabase.CMND = info.CMND.Trim();
+                setDatabase.NgayCap = info.NgayCap;
+                setDatabase.HoTen = info.HoTen.ToString();
+                setDatabase.GioiTinh = info.GioiTinh.ToString();
+                setDatabase.NgaySinh = info.NgaySinh;
+                setDatabase.DiaChi = info.DiaChi.ToString();
+
+                NhanVien account = new NhanVien();
+                account.CMND = info.CMND.Trim();
+                account.MaNV = role.MaChucVu.Trim() + Shared.CreateID(database, role.MaChucVu).ToString();
+                account.MatKhau = authTmp.Trim();
+                account.MaChucVu = role.MaChucVu.Trim();
+                account.MATT = 6;
+
+                database.ThongTinNDs.Add(setDatabase);
+                database.NhanViens.Add(account);
+                database.SaveChanges();
+
+                return (true, "Đăng ký thành công");
+            }
+            catch
+            {
+                return (false, "Tạo tài khoản thất bại - Xin vui lòng thử lại !");
+            }
         }
     }
 }

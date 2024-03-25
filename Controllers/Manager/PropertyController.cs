@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿
+using System.Net;
 using System.Web.Mvc;
 using QLMB.Models;
 using System.Collections.Generic;
@@ -6,12 +7,13 @@ using System.IO;
 using System.Linq;
 using QLMB.Design_Pattern.Facade;
 using System.Web;
+using QLMB.Design_Pattern.Template_Method.ConcreteClass;
 namespace QLMB.Controllers
 {
     public class PropertyController : Controller
     {
         // Database & Constant configurations
-        private database db = new database();
+        private database database = new database();
         private readonly string ROLE = "MB";
 
         /*
@@ -46,7 +48,7 @@ namespace QLMB.Controllers
             {
                 if (IsValidRole())
                 {
-                    List<TinhTrang> dsTinhTrang = db.TinhTrangs.Where(k => k.MATT >= 7).ToList();
+                    List<TinhTrang> dsTinhTrang = database.TinhTrangs.Where(k => k.MATT >= 7).ToList();
                     ViewBag.MATT = new SelectList(dsTinhTrang, "MaTT", "TenTT");
 
                     return View();
@@ -56,23 +58,13 @@ namespace QLMB.Controllers
             }
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
+
+        //Trang chi tiết -- | [Template Method Pattern] | --
         public ActionResult Details(string id)
         {
-            try
-            {
-                if (IsValidRole())
-                {
-                    if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
-                    
-                    MatBang matBang = db.MatBangs.Find(id);
-                    if (matBang == null) { return HttpNotFound(); }
-
-                    return View(matBang);
-                }
-
-                return RedirectToAction("Login", "Login");
-            }
-            catch { return RedirectToAction("Index", "SkillIssue"); }
+            HttpSessionStateBase session = this.Session;
+            AbstractDetail detailPage = new ConcretePropertyDetail(session);
+            return detailPage.DetailTemplateMethod(id);
         }
         public ActionResult Delete(string id)
         {
@@ -81,8 +73,8 @@ namespace QLMB.Controllers
                 if (IsValidRole())
                 {
                     if (id == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
-                    MatBang matBang = db.MatBangs.Find(id);
-                    
+                    MatBang matBang = database.MatBangs.Find(id);
+
                     if (matBang == null) { return HttpNotFound(); }
 
                     return View(matBang);
@@ -92,7 +84,7 @@ namespace QLMB.Controllers
             }
             catch { return RedirectToAction("Index", "SkillIssue"); }
         }
-        
+
         public string GetImagePath(string fileName)
         {
             return Path.Combine(Server.MapPath(MatBang.SERVER_IMG_PATH), fileName);
@@ -107,13 +99,13 @@ namespace QLMB.Controllers
             {
                 // Try to assign 6-chars PropertyID
                 string idTmp = RandomID.Get();
-                while(RandomID.ExistPropertyID(idTmp)) { idTmp = RandomID.Get(); }
+                while (RandomID.ExistPropertyID(idTmp)) { idTmp = RandomID.Get(); }
 
                 matBang.MaMB = idTmp;
                 // Assign value for property
-                if(matBang.TienThue == 0) { matBang.TienThue = MatBang.SINGLE_PRICE * matBang.DienTich; }
+                if (matBang.TienThue == 0) { matBang.TienThue = MatBang.SINGLE_PRICE * matBang.DienTich; }
 
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     if (matBang.UploadImage != null)
                     {
@@ -123,10 +115,10 @@ namespace QLMB.Controllers
                         matBang.HinhMB = fileName;
                         matBang.UploadImage.SaveAs(GetImagePath(fileName));
                     }
-                    db.MatBangs.Add(matBang);
-                    db.SaveChanges();
+                    database.MatBangs.Add(matBang);
+                    database.SaveChanges();
                 }
-                ViewBag.MATT = new SelectList(db.TinhTrangs, "MATT", "TenTT", matBang.MATT);
+                ViewBag.MATT = new SelectList(database.TinhTrangs, "MATT", "TenTT", matBang.MATT);
 
                 return RedirectToAction("Index");
             }
@@ -140,9 +132,9 @@ namespace QLMB.Controllers
         {
             try
             {
-                MatBang matBang = db.MatBangs.Find(id);
-                db.MatBangs.Remove(matBang);
-                db.SaveChanges();
+                MatBang matBang = database.MatBangs.Find(id);
+                database.MatBangs.Remove(matBang);
+                database.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -152,7 +144,7 @@ namespace QLMB.Controllers
         // Dispose
         protected override void Dispose(bool disposing)
         {
-            if (disposing) { db.Dispose(); }
+            if (disposing) { database.Dispose(); }
             base.Dispose(disposing);
         }
     }
