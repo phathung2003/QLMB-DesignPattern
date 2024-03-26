@@ -9,7 +9,7 @@ namespace QLMB.Controllers
 {
     public class AccountController : Controller
     {
-        private database database = new database();
+        private readonly database database = new database();
         
         //Quản lý chuyển trang
         public ActionResult Manager()

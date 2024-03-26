@@ -149,6 +149,10 @@
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\ConcreteHandler\ConcreteCreateAccount.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\Interface\IHandlerEmployeeRegister.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\PhraseType.cs" />
+    <Compile Include="Design_Pattern\Command\ConcreteCommand\ConcreteCheckCMNDRentail.cs" />
+    <Compile Include="Design_Pattern\Command\Invoker\CommandInvoker.cs" />
+    <Compile Include="Design_Pattern\Command\Interface\ICommand.cs" />
+    <Compile Include="Design_Pattern\Command\ConcreteCommand\ConcreteResetPassword.cs" />
     <Compile Include="Design_Pattern\Facade\Facade\FacadeMainPage.cs" />
     <Compile Include="Design_Pattern\Facade\RoleType.cs" />
     <Compile Include="Design_Pattern\Facade\SubClass\EventPageSubClass.cs" />
@@ -301,6 +305,12 @@
     <Content Include="Resources\Picture\Banner\Banner2.png" />
     <Content Include="Resources\Picture\Logo\Logo_DarkMode.png" />
     <Content Include="Resources\Picture\Logo\Logo_LightMode.png" />
+    <Content Include="Resources\Picture\Property\Bán giày.jpg" />
+    <Content Include="Resources\Picture\Property\Bán giỏ xách.jpg" />
+    <Content Include="Resources\Picture\Property\Khu coi phim.jpg" />
+    <Content Include="Resources\Picture\Property\Khu vui chơi thiếu nhi.jpg" />
+    <Content Include="Resources\Picture\Property\Khu vui chơi điện tử.jpg" />
+    <Content Include="Resources\Picture\Property\Khu ăn uống.jpg" />
     <Content Include="Resources\Picture\SkillIssue\error-404.jpg" />
     <Content Include="Resources\Picture\User\userDefault.png" />
     <Content Include="Resources\Query\Mohamed_Query.sql" />
@@ -384,7 +394,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Resources\Picture\Property\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
