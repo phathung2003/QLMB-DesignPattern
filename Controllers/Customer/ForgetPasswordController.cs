@@ -7,8 +7,6 @@ namespace QLMB.Controllers
 {
     public class ForgetPasswordController : Controller
     {
-        private database database = new database();
-
         //Trang quên mật khẩu
         public ActionResult ForgetPassword() { return View(); }
 
@@ -28,7 +26,7 @@ namespace QLMB.Controllers
 
         //----------- Người thuê -----------//
         //Cài lại mật khẩu
-        public ActionResult rePasswordNguoiThue()
+        public ActionResult RePasswordNguoiThue()
         {
             if (Session["TenDangNhap"] != null) { return View(); }
             else { return RedirectToAction("ForgetPassword", "ForgetPassword"); }
@@ -37,7 +35,7 @@ namespace QLMB.Controllers
         //Cập nhật mật khẩu -- | [Command Pattern] | --
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult rePasswordNguoiThue(NguoiThue nguoiThue, string choice, string rePass)
+        public ActionResult RePasswordNguoiThue(NguoiThue nguoiThue, string choice, string rePass)
         {
             HttpSessionStateBase session = this.Session;
             ModelStateDictionary modelState = this.ModelState;

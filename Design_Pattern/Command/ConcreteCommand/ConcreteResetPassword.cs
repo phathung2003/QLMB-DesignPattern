@@ -9,10 +9,10 @@ namespace QLMB.Design_Pattern.Command
 {
     public class ConcreteResetPassword : Controller, ICommand
     {
-        private HttpSessionStateBase session;
-        private Controller controller;
-        private ModelStateDictionary modelState;
-        private NguoiThue nguoiThue;
+        private readonly HttpSessionStateBase session;
+        private readonly Controller controller;
+        private readonly ModelStateDictionary modelState;
+        private readonly NguoiThue nguoiThue;
         private string choice;
         private string rePass;
         

@@ -7,9 +7,9 @@ namespace QLMB.Design_Pattern.Command.ConcreteCommand
 {
     public class ConcreteCheckCMNDRentail : Controller, ICommand
     {
-        private database database = new database();
-        private HttpSessionStateBase session;
-        private ModelStateDictionary modelState;
+        private readonly database database = new database();
+        private readonly HttpSessionStateBase session;
+        private readonly ModelStateDictionary modelState;
         private string CMND;
 
         public ConcreteCheckCMNDRentail(HttpSessionStateBase session, ModelStateDictionary modelState, string CMND)
