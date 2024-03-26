@@ -149,6 +149,9 @@
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\ConcreteHandler\ConcreteCreateAccount.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\Interface\IHandlerEmployeeRegister.cs" />
     <Compile Include="Design_Pattern\Chain_Of_Responsibility\PhraseType.cs" />
+    <Compile Include="Design_Pattern\Command\CommandInvoker.cs" />
+    <Compile Include="Design_Pattern\Command\ICommand.cs" />
+    <Compile Include="Design_Pattern\Command\ResetPasswordCommand.cs" />
     <Compile Include="Design_Pattern\Command\ConcreteCommand\ConcreteCheckCMNDRentail.cs" />
     <Compile Include="Design_Pattern\Command\Invoker\CommandInvoker.cs" />
     <Compile Include="Design_Pattern\Command\Interface\ICommand.cs" />
